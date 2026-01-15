@@ -51,3 +51,7 @@ package.json
 /man/
 /share/
 /src/
+
+# local files - don't commit
+requirements_temp.txt
+start-odoo.bat
