@@ -29,7 +29,7 @@ class SaleOrderLine(models.Model):
         compute='_compute_effective_quantity',
         store=True,
         digits='Product Unit',
-        help="Effective quantity = number of panels × quantity. If number of panels = 0, uses normal quantity."
+        help="Effective quantity = (number of panels × quantity) / 1,000,000. If number of panels = 0, uses normal quantity."
     )
 
     # ========== Compute Methods ==========
@@ -37,12 +37,13 @@ class SaleOrderLine(models.Model):
     @api.depends('number_of_panels', 'product_uom_qty')
     def _compute_effective_quantity(self):
         """
-        Calculate effective quantity based on number of panels × quantity
+        Calculate effective quantity based on (number of panels × quantity) / 1,000,000
         If number_of_panels = 0 or empty, uses normal product_uom_qty
         """
+        DIVISOR = 1000000.0  # 1 million
         for line in self:
             if line.number_of_panels and line.number_of_panels > 0:
-                line.effective_quantity = line.number_of_panels * line.product_uom_qty
+                line.effective_quantity = (line.number_of_panels * line.product_uom_qty) / DIVISOR
             else:
                 line.effective_quantity = line.product_uom_qty
 

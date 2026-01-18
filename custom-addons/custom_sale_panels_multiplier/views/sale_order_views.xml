@@ -39,6 +39,16 @@
                     invisible="display_type"
                     readonly="is_downpayment"/>
             </xpath>
+            
+            <!-- Add effective_quantity field (Volume m³) in List View after product_uom_qty field -->
+            <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="after">
+                <field 
+                    name="effective_quantity" 
+                    string="Volume (m³)"
+                    optional="show"
+                    invisible="display_type"
+                    readonly="1"/>
+            </xpath>
         </field>
     </record>
 
