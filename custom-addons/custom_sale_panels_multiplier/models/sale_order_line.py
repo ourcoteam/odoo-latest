@@ -15,10 +15,9 @@ class SaleOrderLine(models.Model):
              "Quantity = (Volume × Number of Panels) / 100,000,000"
     )
     
-    number_of_panels = fields.Float(
+    number_of_panels = fields.Integer(
         string="Number of Panels",
-        digits='Product Unit',
-        default=0.0,
+        default=0,
         help="Number of panels - used to calculate quantity automatically. "
              "Quantity = (Volume × Number of Panels) / 100,000,000"
     )
