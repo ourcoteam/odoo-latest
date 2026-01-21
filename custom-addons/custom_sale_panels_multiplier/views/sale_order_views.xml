@@ -16,7 +16,7 @@
                     <field name="volume" class="oe_inline"/>
                 </div>
                 <!-- number_of_panels field (second) -->
-                <label for="number_of_panels" string="Number of Panels" invisible="display_type"/>
+                <label for="number_of_panels" string="عدد الألواح" invisible="display_type"/>
                 <div name="panels_qty" invisible="display_type">
                     <field name="number_of_panels" class="oe_inline"/>
                 </div>
@@ -33,15 +33,21 @@
                 <!-- number_of_panels field (second) -->
                 <field 
                     name="number_of_panels" 
-                    string="Number of Panels"
+                    string="عدد الألواح"
                     optional="show"
                     invisible="display_type"
                     readonly="is_downpayment"/>
             </xpath>
             
-            <!-- Make product_uom_qty readonly when volume and panels are used -->
+            <!-- Make product_uom_qty readonly when volume and panels are used and change label to "الكمية m³" -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="attributes">
                 <attribute name="readonly">display_type or (volume and number_of_panels and number_of_panels > 0)</attribute>
+                <attribute name="string">الكمية m³</attribute>
+            </xpath>
+            
+            <!-- Change product_uom_qty label in Form View to "الكمية m³" -->
+            <xpath expr="//label[@for='product_uom_qty']" position="attributes">
+                <attribute name="string">الكمية m³</attribute>
             </xpath>
         </field>
     </record>
