@@ -37,6 +37,7 @@
     'website': 'https://www.odoo.com',
     'depends': [
         'product',
+        'purchase',
         'sale',
         'sale_management',
     ],
@@ -44,6 +45,7 @@
         'security/ir.model.access.csv',
         'views/product_views.xml',
         'views/sale_order_views.xml',
+        'views/purchase_order_views.xml',
     ],
     'installable': True,
     'application': False,
