@@ -36,11 +36,13 @@
     'author': 'Odoo Developer',
     'website': 'https://www.odoo.com',
     'depends': [
+        'product',
         'sale',
         'sale_management',
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/product_views.xml',
         'views/sale_order_views.xml',
     ],
     'installable': True,

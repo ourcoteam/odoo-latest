@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Product Form View - Add Width and Thickness fields -->
+    <record id="view_product_template_form_inherit_dimensions" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.dimensions</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Add Width and Thickness in General Information tab before Internal Notes -->
+            <xpath expr="//group[@name='internal_notes']" position="before">
+                <group string="Dimensions" name="group_dimensions" invisible="type != 'consu'">
+                    <group>
+                        <label for="width"/>
+                        <div class="o_row">
+                            <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;"/>
+                        </div>
+                        <label for="thickness"/>
+                        <div class="o_row">
+                            <field name="thickness" string="السمك" class="oe_inline" style="max-width: 7rem;"/>
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

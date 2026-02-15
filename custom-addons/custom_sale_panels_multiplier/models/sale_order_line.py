@@ -83,11 +83,12 @@ class SaleOrderLine(models.Model):
     @api.onchange('product_id')
     def _onchange_product_id_set_dimensions(self):
         """
-        Optionally set default dimensions from product when product is selected.
-        Product has volume only - no length/width/thickness in standard Odoo.
-        User enters dimensions manually.
+        Copy width and thickness from product when product is selected.
+        Length is entered manually by the user.
         """
-        pass
+        if self.product_id:
+            self.width = self.product_id.width or 0.0
+            self.thickness = self.product_id.thickness or 0.0
 
     # ========== Override Methods ==========
 
