@@ -8,6 +8,21 @@ from odoo.tools.float_utils import float_is_zero
 
 PANELS_AUTO_NAME_FIELDS = frozenset({'mark', 'grade', 'width', 'thickness'})
 
+def _panels_load_result_ids(load_result):
+    """Extract ids from `load()` result across Odoo versions."""
+    if not load_result:
+        return []
+    # Common: {'ids': [...], 'messages': [...]}
+    if isinstance(load_result, dict):
+        ids = load_result.get('ids') or []
+        return [i for i in ids if i]
+    # Some variants may return (ids, messages) or (ids, ...)
+    if isinstance(load_result, (list, tuple)) and load_result:
+        first = load_result[0]
+        if isinstance(first, (list, tuple)):
+            return [i for i in first if i]
+    return []
+
 
 def _panels_format_dimension_number(env, value):
     """Format width/thickness for the auto name; empty if unset or zero."""
@@ -78,6 +93,21 @@ class ProductProduct(models.Model):
             templates = self.product_tmpl_id.filtered(lambda t: t.product_variant_count == 1)
             for tmpl in templates:
                 tmpl.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
+        return res
+
+    def load(self, fields, data):
+        """Ensure auto-name after Excel imports on variants."""
+        res = super().load(fields, data)
+        if self.env.context.get('skip_panels_auto_name'):
+            return res
+        if not (PANELS_AUTO_NAME_FIELDS & set(fields or [])):
+            return res
+        ids = _panels_load_result_ids(res)
+        if not ids:
+            return res
+        templates = self.browse(ids).exists().mapped('product_tmpl_id')
+        for tmpl in templates:
+            tmpl.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
         return res
 
 
@@ -160,4 +190,52 @@ class ProductTemplate(models.Model):
         if PANELS_AUTO_NAME_FIELDS & vals.keys():
             for template in self:
                 template.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
+        return res
+
+    def load(self, fields, data):
+        """Ensure auto-name during/after Excel imports on templates.
+
+        Import of new products requires `name`. If the sheet omits `name` (or
+        provides it blank), we auto-fill it from Mark/Grade/Thickness/Width
+        before delegating to Odoo's import, then we also enforce auto-name after.
+        """
+        fields = list(fields or [])
+        data = list(data or [])
+
+        # Pre-fill required `name` for create imports when it is missing/blank.
+        if PANELS_AUTO_NAME_FIELDS & set(fields):
+            name_idx = fields.index('name') if 'name' in fields else None
+            if name_idx is None:
+                fields.append('name')
+                name_idx = len(fields) - 1
+                data = [list(row) + [''] for row in data]
+
+            idx = {f: fields.index(f) for f in PANELS_AUTO_NAME_FIELDS if f in fields}
+            builder = self.env['product.template']._panels_build_product_name
+
+            for row in data:
+                current = row[name_idx] if name_idx < len(row) else ''
+                if isinstance(current, str) and current.strip():
+                    continue
+                if current not in (False, None, ''):
+                    continue
+                computed = builder(
+                    row[idx.get('mark')] if 'mark' in idx else '',
+                    row[idx.get('grade')] if 'grade' in idx else '',
+                    row[idx.get('thickness')] if 'thickness' in idx else '',
+                    row[idx.get('width')] if 'width' in idx else '',
+                )
+                row[name_idx] = computed or 'Imported Product'
+
+        res = super().load(fields, data)
+        if self.env.context.get('skip_panels_auto_name'):
+            return res
+        if not (PANELS_AUTO_NAME_FIELDS & set(fields or [])):
+            return res
+        ids = _panels_load_result_ids(res)
+        if not ids:
+            return res
+        templates = self.browse(ids).exists()
+        for tmpl in templates:
+            tmpl.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
         return res
