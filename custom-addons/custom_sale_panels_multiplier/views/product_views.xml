@@ -11,6 +11,8 @@
             <xpath expr="//group[@name='internal_notes']" position="before">
                 <group string="Dimensions" name="group_dimensions" invisible="type != 'consu'">
                     <group>
+                        <field name="mark" string="Mark"/>
+                        <field name="grade" string="Grade"/>
                         <label for="width"/>
                         <div class="o_row">
                             <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;"/>
