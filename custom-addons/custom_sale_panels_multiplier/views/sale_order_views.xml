@@ -7,6 +7,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <!-- Per-order toggle to show/hide Volume -->
+            <xpath expr="//field[@name='order_line']" position="before">
+                <field name="show_volume"/>
+            </xpath>
+
             <!-- Add Length, Width, Thickness and number_of_panels fields in Form View before product_uom_qty label -->
             <xpath expr="//label[@for='product_uom_qty']" position="before">
                 <!-- Length field -->
@@ -26,8 +31,8 @@
                     <field name="thickness" class="oe_inline"/>
                 </div>
                 <!-- Volume (computed, readonly) -->
-                <label for="volume" string="Volume" invisible="display_type"/>
-                <div name="volume" invisible="display_type">
+                <label for="volume" string="Volume" invisible="display_type or not order_id.show_volume"/>
+                <div name="volume" invisible="display_type or not order_id.show_volume">
                     <field name="volume" readonly="1" class="oe_inline"/>
                 </div>
                 <!-- number_of_panels field -->
@@ -62,7 +67,7 @@
                     name="volume"
                     string="Volume"
                     optional="show"
-                    invisible="display_type"
+                    invisible="display_type or not parent.show_volume"
                     readonly="1"/>
                 <!-- number_of_panels field -->
                 <field
