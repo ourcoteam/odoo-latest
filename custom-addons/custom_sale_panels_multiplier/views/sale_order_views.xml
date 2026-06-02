@@ -14,21 +14,21 @@
 
             <!-- Add Length, Width, Thickness and number_of_panels fields in Form View before product_uom_qty label -->
             <xpath expr="//label[@for='product_uom_qty']" position="before">
-                <!-- Length field -->
-                <label for="length" string="الطول" invisible="display_type"/>
-                <div name="length" invisible="display_type">
+                <!-- Thickness field -->
+                <label for="thickness" string="السمك" invisible="display_type"/>
+                <div name="thickness" invisible="display_type">
                     <field name="product_id" invisible="1" force_save="1"/>
-                    <field name="length" class="oe_inline"/>
+                    <field name="thickness" class="oe_inline"/>
                 </div>
                 <!-- Width field -->
                 <label for="width" string="العرض" invisible="display_type"/>
                 <div name="width" invisible="display_type">
                     <field name="width" class="oe_inline"/>
                 </div>
-                <!-- Thickness field -->
-                <label for="thickness" string="السمك" invisible="display_type"/>
-                <div name="thickness" invisible="display_type">
-                    <field name="thickness" class="oe_inline"/>
+                <!-- Length field -->
+                <label for="length" string="الطول" invisible="display_type"/>
+                <div name="length" invisible="display_type">
+                    <field name="length" class="oe_inline"/>
                 </div>
                 <!-- Volume (computed, readonly) -->
                 <label for="volume" string="Volume" invisible="display_type or not order_id.show_volume"/>
@@ -44,10 +44,10 @@
 
             <!-- Add Length, Width, Thickness and number_of_panels fields in List View before product_uom_qty field -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="before">
-                <!-- Length field -->
+                <!-- Thickness field -->
                 <field
-                    name="length"
-                    string="الطول"
+                    name="thickness"
+                    string="السمك"
                     optional="show"
                     invisible="display_type"/>
                 <!-- Width field -->
@@ -56,10 +56,10 @@
                     string="العرض"
                     optional="show"
                     invisible="display_type"/>
-                <!-- Thickness field -->
+                <!-- Length field -->
                 <field
-                    name="thickness"
-                    string="السمك"
+                    name="length"
+                    string="الطول"
                     optional="show"
                     invisible="display_type"/>
                 <!-- Volume (computed, readonly) -->
