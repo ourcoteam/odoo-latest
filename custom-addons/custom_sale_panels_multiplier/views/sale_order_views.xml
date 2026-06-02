@@ -98,6 +98,14 @@
             <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="attributes">
                 <attribute name="string">سعر m³</attribute>
             </xpath>
+
+            <!-- Total quantity m³ in footer (like Untaxed Amount) -->
+            <xpath expr="//group[@name='sale_total']/field[@name='tax_totals']" position="before">
+                <div class="d-flex justify-content-between align-items-center w-100 mb-2">
+                    <label class="o_form_label o_tax_total_label fw-bold" for="total_qty_m3">إجمالي الكمية m³</label>
+                    <field name="total_qty_m3" nolabel="1" readonly="1" class="o_list_monetary text-end"/>
+                </div>
+            </xpath>
         </field>
     </record>
 
