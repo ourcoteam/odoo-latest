@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Custom Sale Panels Multiplier',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Sales',
     'summary': 'Add Number of Panels field in Sales Orders with impact on financial calculations',
     'description': """
@@ -36,6 +36,7 @@
     'author': 'Odoo Developer',
     'website': 'https://www.odoo.com',
     'depends': [
+        'account',
         'product',
         'purchase',
         'sale',
@@ -47,6 +48,11 @@
         'views/sale_order_views.xml',
         'views/purchase_order_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'custom_sale_panels_multiplier/static/src/js/panels_order_line_keyboard.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,
