@@ -20,6 +20,10 @@ __pycache__/
 status
 # odoo filestore
 odoo/filestore
+/data/
+/logs/
+/venv/
+*.log
 # maintenance migration scripts
 odoo/addons/base/maintenance
 # windows installation config file
@@ -51,7 +55,3 @@ package.json
 /man/
 /share/
 /src/
-
-# local files - don't commit
-requirements_temp.txt
-start-odoo.bat

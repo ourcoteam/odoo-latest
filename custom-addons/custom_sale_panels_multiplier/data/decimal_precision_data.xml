@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="decimal_precision_panels_millimeter" model="decimal.precision">
+        <field name="name">Panels Millimeter</field>
+        <field name="digits">3</field>
+    </record>
+
+    <record id="decimal_precision_panels_quantity_m3" model="decimal.precision">
+        <field name="name">Panels Quantity m3</field>
+        <field name="digits">6</field>
+    </record>
+
+</odoo>
