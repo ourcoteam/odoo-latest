@@ -32,7 +32,7 @@ def _panels_format_dimension_number(env, value):
         v = float(value)
     except (TypeError, ValueError):
         return ''
-    prec_digits = env['decimal.precision'].precision_get('Volume')
+    prec_digits = env['decimal.precision'].precision_get('Panels Millimeter')
     if prec_digits is None:
         prec_digits = 4
     rounded = float_round(v, precision_digits=prec_digits)
@@ -52,14 +52,14 @@ class ProductProduct(models.Model):
         related='product_tmpl_id.width',
         readonly=False,
         store=True,
-        digits='Volume',
+        digits='Panels Millimeter',
     )
 
     thickness = fields.Float(
         related='product_tmpl_id.thickness',
         readonly=False,
         store=True,
-        digits='Volume',
+        digits='Panels Millimeter',
     )
 
     # Keep mark/grade canonical on product.template; expose on variant as editable related.
@@ -118,14 +118,14 @@ class ProductTemplate(models.Model):
     width = fields.Float(
         string="العرض",
         store=True,
-        digits='Volume',
+        digits='Panels Millimeter',
         help="Product width - auto-fills in sale order line when product is selected."
     )
 
     thickness = fields.Float(
         string="السمك",
         store=True,
-        digits='Volume',
+        digits='Panels Millimeter',
         help="Product thickness - auto-fills in sale order line when product is selected."
     )
 

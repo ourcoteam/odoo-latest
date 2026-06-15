@@ -8,23 +8,25 @@ DIVISOR = 100000000.0  # 100 million
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
+    product_qty = fields.Float(digits='Panels Quantity m3')
+
     # ========== Fields ==========
 
     length = fields.Float(
         string="الطول",
-        digits='Volume',
+        digits='Panels Millimeter',
         help="Length - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
     width = fields.Float(
         string="العرض",
-        digits='Volume',
+        digits='Panels Millimeter',
         help="Width - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
     thickness = fields.Float(
         string="السمك",
-        digits='Volume',
+        digits='Panels Millimeter',
         help="Thickness - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
@@ -32,7 +34,7 @@ class PurchaseOrderLine(models.Model):
         string="Volume",
         compute='_compute_volume',
         store=True,
-        digits='Volume',
+        digits='Panels Quantity m3',
         help="Volume = Length × Width × Thickness. Used in quantity calculation."
     )
 

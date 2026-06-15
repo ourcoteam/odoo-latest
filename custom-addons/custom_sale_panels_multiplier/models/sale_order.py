@@ -15,7 +15,7 @@ class SaleOrder(models.Model):
     total_qty_m3 = fields.Float(
         string="إجمالي الكمية m³",
         compute='_compute_total_qty_m3',
-        digits='Product Unit',
+        digits='Panels Quantity m3',
     )
 
     @api.depends('order_line.product_uom_qty', 'order_line.display_type', 'order_line.is_downpayment')
