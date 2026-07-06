@@ -14,7 +14,7 @@ jobs:
       - name: Deploy Odoo 19 from Git
         uses: garygrossgarten/github-action-ssh@release
         with:
-          host: 167.71.6.96
+          host: 188.166.95.236
           username: root
           port: 22
           privateKey: ${{ secrets.DEPLOY_SSH_KEY }}
