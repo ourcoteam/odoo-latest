@@ -11,18 +11,25 @@
             <xpath expr="//group[@name='internal_notes']" position="before">
                 <group string="Dimensions" name="group_dimensions" invisible="type != 'consu'">
                     <group>
-                        <field name="mark" string="نوع المنشار"/>
-                        <field name="grade" string="الدرجة"/>
+                        <field name="mark" string="نوع المنشار" required="type == 'consu'"/>
+                        <field name="grade" string="الدرجة" required="type == 'consu'"/>
                         <label for="width"/>
                         <div class="o_row">
-                            <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;"/>
+                            <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
                         </div>
                         <label for="thickness"/>
                         <div class="o_row">
-                            <field name="thickness" string="السمك" class="oe_inline" style="max-width: 7rem;"/>
+                            <field name="thickness" string="السمك" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
                         </div>
                     </group>
                 </group>
+            </xpath>
+
+            <!-- Lock the Name field for goods: it must always be built from
+                 Mark/Grade/Width/Thickness so every product follows the same
+                 naming pattern, with no manual exceptions. -->
+            <xpath expr="//field[@name='name'][@widget='text']" position="attributes">
+                <attribute name="readonly">type == 'consu'</attribute>
             </xpath>
         </field>
     </record>

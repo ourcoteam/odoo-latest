@@ -2,7 +2,8 @@
 # product.product + product.template extensions in one module file so fields
 # always load together (avoids upgrade errors if one file is missing on server).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.tools import float_round
 from odoo.tools.float_utils import float_is_zero
 
@@ -174,6 +175,29 @@ class ProductTemplate(models.Model):
         )
         if name:
             self.name = name
+
+    @api.constrains('type', 'mark', 'grade', 'width', 'thickness')
+    def _check_panels_dimensions_required(self):
+        """Enforce the Mark - Grade - Thickness - Width naming pattern with no
+        exceptions: a stock/goods product cannot be saved with any of the four
+        parts missing, so the auto-built name never skips a segment."""
+        for template in self:
+            if template.type != 'consu':
+                continue
+            missing = []
+            if not (template.mark or '').strip():
+                missing.append(_("Mark (نوع المنشار)"))
+            if not (template.grade or '').strip():
+                missing.append(_("Grade (الدرجة)"))
+            if not template.width:
+                missing.append(_("Width (العرض)"))
+            if not template.thickness:
+                missing.append(_("Thickness (السمك)"))
+            if missing:
+                raise ValidationError(_(
+                    "Mark, Grade, Width and Thickness are all required so every "
+                    "product name follows the same pattern. Missing: %s"
+                ) % ', '.join(missing))
 
     @api.model_create_multi
     def create(self, vals_list):
