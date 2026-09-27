@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_account_statement" model="ir.actions.report">
+        <field name="name">Statement of Account</field>
+        <field name="model">account.statement.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_sale_panels_multiplier.report_account_statement</field>
+        <field name="report_file">custom_sale_panels_multiplier.report_account_statement</field>
+        <field name="print_report_name">'Statement - %s' % (object.partner_id.name)</field>
+    </record>
+
+    <template id="report_account_statement_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>كشف حساب / Statement of Account</h2>
+                <div class="row mb-4">
+                    <div class="col-6" name="statement_partner">
+                        <strong>العميل / المورد</strong>
+                        <div t-field="doc.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    </div>
+                    <div class="col-6 text-end" name="statement_period">
+                        <p t-if="doc.date_from">
+                            <strong>من: </strong><span t-field="doc.date_from"/>
+                        </p>
+                        <p t-if="doc.date_to">
+                            <strong>إلى: </strong><span t-field="doc.date_to"/>
+                        </p>
+                    </div>
+                </div>
+
+                <table class="table table-sm o_main_table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>القيد</th>
+                            <th>البيان</th>
+                            <th class="text-end">مدين</th>
+                            <th class="text-end">دائن</th>
+                            <th class="text-end">الرصيد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fw-bold">
+                            <td colspan="5">رصيد افتتاحي / Opening Balance</td>
+                            <td class="text-end">
+                                <span t-field="doc.opening_balance"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                        <tr t-foreach="doc.line_ids" t-as="line">
+                            <td><span t-field="line.date"/></td>
+                            <td><span t-field="line.move_id.name"/></td>
+                            <td><span t-field="line.label"/></td>
+                            <td class="text-end">
+                                <span t-field="line.debit"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="line.credit"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="line.balance"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                        <tr class="fw-bold border-top">
+                            <td colspan="5">رصيد ختامي / Closing Balance</td>
+                            <td class="text-end">
+                                <span t-field="doc.closing_balance"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_account_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="custom_sale_panels_multiplier.report_account_statement_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>
