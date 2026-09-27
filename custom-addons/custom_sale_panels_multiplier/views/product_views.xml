@@ -21,6 +21,7 @@
                         <div class="o_row">
                             <field name="thickness" string="السمك" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
                         </div>
+                        <field name="supplier_company_id" string="الشركة المورّدة"/>
                     </group>
                 </group>
             </xpath>
@@ -31,6 +32,21 @@
             <xpath expr="//field[@name='name'][@widget='text']" position="attributes">
                 <attribute name="readonly">type == 'consu'</attribute>
             </xpath>
+        </field>
+    </record>
+
+    <!-- Make the supplier company searchable/groupable on Inventory product lists -->
+    <record id="view_product_template_search_inherit_panels" model="ir.ui.view">
+        <field name="name">product.template.search.inherit.panels</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <field name="product_tag_ids" position="after">
+                <field name="supplier_company_id" string="الشركة المورّدة"/>
+            </field>
+            <group position="inside">
+                <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
+            </group>
         </field>
     </record>
 

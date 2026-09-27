@@ -141,6 +141,14 @@ class ProductTemplate(models.Model):
         help="Used with Mark, thickness and width to build the product name automatically."
     )
 
+    supplier_company_id = fields.Many2one(
+        'res.partner',
+        string="الشركة المورّدة",
+        domain=[('is_company', '=', True)],
+        context={'default_is_company': True},
+        help="The foreign company this product is imported from.",
+    )
+
     @api.model
     def _panels_build_product_name(self, mark, grade, thickness, width):
         """Build name as: Mark - Grade - T - W (non-empty parts only)."""

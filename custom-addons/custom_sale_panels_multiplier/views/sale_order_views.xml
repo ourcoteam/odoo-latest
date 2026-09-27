@@ -76,6 +76,13 @@
                     optional="show"
                     invisible="display_type"
                     readonly="is_downpayment"/>
+                <!-- Supplier company (read-only, follows the product) -->
+                <field
+                    name="supplier_company_id"
+                    string="الشركة المورّدة"
+                    optional="hide"
+                    readonly="1"
+                    invisible="display_type"/>
             </xpath>
 
             <!-- Make product_uom_qty readonly when dimensions and panels are used and change label to "الكمية m³" -->
@@ -106,6 +113,46 @@
                     <field name="total_qty_m3" nolabel="1" readonly="1" class="o_list_monetary text-end"/>
                 </div>
             </xpath>
+        </field>
+    </record>
+
+    <!-- Make the supplier company searchable/groupable on the Sales Orders list -->
+    <record id="view_sales_order_filter_inherit_panels" model="ir.ui.view">
+        <field name="name">sale.order.list.select.inherit.panels</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="order_line" position="after">
+                <field name="order_line" string="الشركة المورّدة" filter_domain="[('order_line.supplier_company_id', 'ilike', self)]"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- The Sales Order Lines list/search (used for line-level reporting) is where
+         grouping by supplier company actually works, since the field lives on the
+         line, not the order header. -->
+    <record id="view_order_line_tree_inherit_panels" model="ir.ui.view">
+        <field name="name">sale.order.line.list.inherit.panels</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_order_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_qty" position="after">
+                <field name="supplier_company_id" string="الشركة المورّدة" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_sales_order_line_filter_inherit_panels" model="ir.ui.view">
+        <field name="name">sale.order.line.select.inherit.panels</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_sales_order_line_filter"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="supplier_company_id" string="الشركة المورّدة"/>
+            </field>
+            <filter name="product" position="after">
+                <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
+            </filter>
         </field>
     </record>
 

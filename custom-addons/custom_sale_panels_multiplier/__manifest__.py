@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Custom Sale Panels Multiplier',
-    'version': '19.0.1.0.6',
+    'version': '19.0.1.0.9',
     'category': 'Sales',
     'summary': 'Add Number of Panels field in Sales Orders with impact on financial calculations',
     'description': """
@@ -41,6 +41,7 @@
         'purchase',
         'sale',
         'sale_management',
+        'stock',
     ],
     'data': [
         'data/decimal_precision_data.xml',
@@ -49,6 +50,7 @@
         'views/sale_order_views.xml',
         'views/purchase_order_views.xml',
         'views/account_move_views.xml',
+        'views/stock_move_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

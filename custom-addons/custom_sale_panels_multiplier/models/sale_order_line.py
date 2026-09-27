@@ -28,6 +28,12 @@ class SaleOrderLine(models.Model):
         help="Thickness - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
+    supplier_company_id = fields.Many2one(
+        related='product_id.product_tmpl_id.supplier_company_id',
+        string="الشركة المورّدة",
+        store=True,
+    )
+
     volume = fields.Float(
         string="Volume",
         compute='_compute_volume',
