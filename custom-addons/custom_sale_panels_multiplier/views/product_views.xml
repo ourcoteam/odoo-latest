@@ -49,12 +49,74 @@
                 <field name="supplier_company_id" string="الشركة المورّدة"/>
                 <field name="mark_id"/>
                 <field name="grade_id"/>
+                <field name="panels_thickness_filter" string="السمك"/>
+                <field name="panels_width_filter" string="العرض"/>
+                <field name="panels_dimensions" string="الأبعاد"/>
             </field>
             <group position="inside">
                 <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
                 <filter string="نوع المنشار" name="group_by_mark" context="{'group_by': 'mark_id'}"/>
                 <filter string="الدرجة" name="group_by_grade" context="{'group_by': 'grade_id'}"/>
+                <filter string="السمك" name="group_by_thickness" context="{'group_by': 'panels_thickness_filter'}"/>
+                <filter string="العرض" name="group_by_width" context="{'group_by': 'panels_width_filter'}"/>
+                <filter string="الأبعاد (السمك × العرض)" name="group_by_dimensions" context="{'group_by': 'panels_dimensions'}"/>
             </group>
+            <!-- Timber filters sidebar: tick any mix of values; values within a
+                 section are OR-ed, sections are AND-ed, counts follow the
+                 other active filters. -->
+            <xpath expr="/search" position="inside">
+                <searchpanel>
+                    <field name="mark_id" string="نوع المنشار" select="multi" enable_counters="1" icon="fa-scissors"/>
+                    <field name="grade_id" string="الدرجة" select="multi" enable_counters="1" icon="fa-certificate"/>
+                    <field name="panels_thickness_filter" string="السمك" select="multi" enable_counters="1" icon="fa-arrows-v"/>
+                    <field name="panels_width_filter" string="العرض" select="multi" enable_counters="1" icon="fa-arrows-h"/>
+                    <field name="supplier_company_id" string="الشركة المورّدة" select="multi" enable_counters="1" icon="fa-building"/>
+                </searchpanel>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- The search view above is also the base of the variant (product.product)
+         search views: drop the sidebar there (expense categories, variants),
+         and the stock report gets the sections in its own sidebar instead,
+         since two search panels in one view break each other. -->
+    <record id="view_product_product_search_no_panels_sidebar" model="ir.ui.view">
+        <field name="name">product.product.search.no.panels.sidebar</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//searchpanel[field[@name='panels_thickness_filter']]" position="replace"/>
+        </field>
+    </record>
+
+    <record id="view_product_stock_report_search_panels" model="ir.ui.view">
+        <field name="name">product.product.search.stock.report.panels</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_search_form_view_stock_report"/>
+        <field name="arch" type="xml">
+            <xpath expr="//searchpanel/field[@name='categ_id']" position="after">
+                <field name="mark_id" string="نوع المنشار" select="multi" enable_counters="1" icon="fa-scissors"/>
+                <field name="grade_id" string="الدرجة" select="multi" enable_counters="1" icon="fa-certificate"/>
+                <field name="panels_thickness_filter" string="السمك" select="multi" enable_counters="1" icon="fa-arrows-v"/>
+                <field name="panels_width_filter" string="العرض" select="multi" enable_counters="1" icon="fa-arrows-h"/>
+                <field name="supplier_company_id" string="الشركة المورّدة" select="multi" enable_counters="1" icon="fa-building"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Timber columns in the products list (sortable, can be hidden) -->
+    <record id="view_product_template_list_inherit_panels" model="ir.ui.view">
+        <field name="name">product.template.list.inherit.panels</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="default_code" position="after">
+                <field name="mark_id" optional="show" options="{'no_create_edit': True, 'no_open': True}"/>
+                <field name="grade_id" optional="show" options="{'no_create_edit': True, 'no_open': True}"/>
+                <field name="thickness" optional="show"/>
+                <field name="width" optional="show"/>
+                <field name="supplier_company_id" string="الشركة المورّدة" optional="hide"/>
+            </field>
         </field>
     </record>
 

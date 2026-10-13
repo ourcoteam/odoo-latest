@@ -4,7 +4,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import float_round
+from odoo.tools import SQL, float_round
 from odoo.tools.float_utils import float_is_zero
 
 from .panels_mark_grade import panels_clean_name
@@ -78,6 +78,38 @@ def _panels_format_dimension_number(env, value):
         return str(int(rounded))
     text = ('%%.%df' % prec_digits) % rounded
     return text.rstrip('0').rstrip('.')
+
+
+# Dimension filter keys (thickness, width, "thickness x width"). They are
+# selections so they can sit in the search panel (which does not take floats),
+# with the values products actually have as options. Keys are zero-padded so
+# grouping/sorting by the stored text follows the numeric order.
+PANELS_DIMENSION_KEY_SEPARATOR = 'x'
+
+
+def _panels_dimension_key(value):
+    if not value or value <= 0:
+        return False
+    return '%015.4f' % value
+
+
+def _panels_dimension_label(env, key):
+    """'0000000018.0000x0000001220.0000' -> '18 × 1220'."""
+    return ' × '.join(
+        _panels_format_dimension_number(env, float(part))
+        for part in key.split(PANELS_DIMENSION_KEY_SEPARATOR)
+    )
+
+
+def _panels_dimension_selection(model, field_name):
+    """Selection options of a dimension filter field: the values in use."""
+    env = model.env
+    env['product.template'].flush_model([field_name])
+    env.cr.execute(SQL(
+        "SELECT DISTINCT %(f)s FROM product_template WHERE %(f)s IS NOT NULL ORDER BY 1",
+        f=SQL.identifier(field_name),
+    ))
+    return [(key, _panels_dimension_label(env, key)) for (key,) in env.cr.fetchall()]
 
 
 class ProductProduct(models.Model):
@@ -192,6 +224,37 @@ class ProductTemplate(models.Model):
         context={'default_is_company': True},
         help="The foreign company this product is imported from.",
     )
+
+    # Filter-only copies of the dimensions (see _panels_dimension_selection).
+    panels_thickness_filter = fields.Selection(
+        selection=lambda self: _panels_dimension_selection(self, 'panels_thickness_filter'),
+        string="السمك (فلتر)",
+        compute='_compute_panels_dimension_filters',
+        store=True,
+    )
+    panels_width_filter = fields.Selection(
+        selection=lambda self: _panels_dimension_selection(self, 'panels_width_filter'),
+        string="العرض (فلتر)",
+        compute='_compute_panels_dimension_filters',
+        store=True,
+    )
+    panels_dimensions = fields.Selection(
+        selection=lambda self: _panels_dimension_selection(self, 'panels_dimensions'),
+        string="الأبعاد (السمك × العرض)",
+        compute='_compute_panels_dimension_filters',
+        store=True,
+    )
+
+    @api.depends('thickness', 'width')
+    def _compute_panels_dimension_filters(self):
+        for template in self:
+            thickness = _panels_dimension_key(template.thickness)
+            width = _panels_dimension_key(template.width)
+            template.panels_thickness_filter = thickness
+            template.panels_width_filter = width
+            template.panels_dimensions = (
+                thickness and width and PANELS_DIMENSION_KEY_SEPARATOR.join((thickness, width))
+            )
 
     @api.model
     def _panels_build_product_name(self, mark, grade, thickness, width):
