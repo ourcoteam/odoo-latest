@@ -259,6 +259,18 @@ class ProductTemplate(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name'):
+                continue
+            # The name field is readonly for goods: build the required name
+            # here so a save never fails on it (form, API, quick create).
+            name = self._panels_build_product_name(
+                self.env['panels.product.mark'].browse(vals.get('mark_id')).name,
+                self.env['panels.product.grade'].browse(vals.get('grade_id')).name,
+                vals.get('thickness'), vals.get('width'),
+            )
+            if name:
+                vals['name'] = name
         records = super().create(vals_list)
         if not self.env.context.get('skip_panels_auto_name'):
             for template in records:

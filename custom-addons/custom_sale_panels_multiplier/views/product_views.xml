@@ -29,9 +29,12 @@
 
             <!-- Lock the Name field for goods: it must always be built from
                  Mark/Grade/Width/Thickness so every product follows the same
-                 naming pattern, with no manual exceptions. -->
+                 naming pattern, with no manual exceptions. force_save: the web
+                 client drops readonly fields on save otherwise, so the name
+                 built on screen never reached the server. -->
             <xpath expr="//field[@name='name'][@widget='text']" position="attributes">
                 <attribute name="readonly">type == 'consu'</attribute>
+                <attribute name="force_save">1</attribute>
             </xpath>
         </field>
     </record>
