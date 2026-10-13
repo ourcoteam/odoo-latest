@@ -9,10 +9,11 @@
         <field name="arch" type="xml">
             <!-- Add Width and Thickness in General Information tab before Internal Notes -->
             <xpath expr="//group[@name='internal_notes']" position="before">
-                <group string="Dimensions" name="group_dimensions" invisible="type != 'consu'">
+                <group string="الأبعاد" name="group_dimensions" invisible="type != 'consu'">
                     <group>
-                        <field name="mark" string="نوع المنشار" required="type == 'consu'"/>
-                        <field name="grade" string="الدرجة" required="type == 'consu'"/>
+                        <!-- Pick a saved value, or type a new one and choose "Create" to save it -->
+                        <field name="mark_id" required="type == 'consu'" options="{'no_create_edit': True, 'no_open': True}"/>
+                        <field name="grade_id" required="type == 'consu'" options="{'no_create_edit': True, 'no_open': True}"/>
                         <label for="width"/>
                         <div class="o_row">
                             <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
@@ -35,7 +36,7 @@
         </field>
     </record>
 
-    <!-- Make the supplier company searchable/groupable on Inventory product lists -->
+    <!-- Make the supplier company, mark and grade searchable/groupable on Inventory product lists -->
     <record id="view_product_template_search_inherit_panels" model="ir.ui.view">
         <field name="name">product.template.search.inherit.panels</field>
         <field name="model">product.template</field>
@@ -43,9 +44,13 @@
         <field name="arch" type="xml">
             <field name="product_tag_ids" position="after">
                 <field name="supplier_company_id" string="الشركة المورّدة"/>
+                <field name="mark_id"/>
+                <field name="grade_id"/>
             </field>
             <group position="inside">
                 <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
+                <filter string="نوع المنشار" name="group_by_mark" context="{'group_by': 'mark_id'}"/>
+                <filter string="الدرجة" name="group_by_grade" context="{'group_by': 'grade_id'}"/>
             </group>
         </field>
     </record>

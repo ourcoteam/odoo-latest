@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import panels_mark_grade
 # product_product defines both product.product and product.template (same file = safe load order).
 from . import product_product
 from . import account_move_line

@@ -7,7 +7,13 @@ from odoo.exceptions import ValidationError
 from odoo.tools import float_round
 from odoo.tools.float_utils import float_is_zero
 
-PANELS_AUTO_NAME_FIELDS = frozenset({'mark', 'grade', 'width', 'thickness'})
+from .panels_mark_grade import panels_clean_name
+
+PANELS_AUTO_NAME_FIELDS = frozenset({'mark_id', 'grade_id', 'width', 'thickness'})
+PANELS_IMPORT_VALUE_MODELS = (
+    ('mark_id', 'panels.product.mark'),
+    ('grade_id', 'panels.product.grade'),
+)
 
 def _panels_load_result_ids(load_result):
     """Extract ids from `load()` result across Odoo versions."""
@@ -23,6 +29,35 @@ def _panels_load_result_ids(load_result):
         if isinstance(first, (list, tuple)):
             return [i for i in first if i]
     return []
+
+
+def _panels_import_base_fields(fields):
+    """Top-level field names of an import (`mark_id/id` -> `mark_id`)."""
+    return {f.split('/')[0] for f in fields or []}
+
+
+def _panels_prepare_import_rows(env, fields, data):
+    """Resolve Mark/Grade names in imported rows (in place).
+
+    Odoo matches a Many2one cell by exact name only, so a sheet with a new
+    value or a different case/spacing would fail. Reuse the saved value
+    (unarchiving it if needed) or create it, and rewrite the cell to the
+    stored spelling.
+    """
+    for field_name, model_name in PANELS_IMPORT_VALUE_MODELS:
+        if field_name not in fields:
+            continue
+        col = fields.index(field_name)
+        Model = env[model_name]
+        resolved = {}
+        for row in data:
+            value = row[col] if col < len(row) else ''
+            if not isinstance(value, str) or not panels_clean_name(value):
+                continue
+            key = panels_clean_name(value).lower()
+            if key not in resolved:
+                resolved[key] = Model._panels_get_or_create(value).name
+            row[col] = resolved[key]
 
 
 def _panels_format_dimension_number(env, value):
@@ -64,24 +99,22 @@ class ProductProduct(models.Model):
     )
 
     # Keep mark/grade canonical on product.template; expose on variant as editable related.
-    mark = fields.Char(
-        related='product_tmpl_id.mark',
+    mark_id = fields.Many2one(
+        related='product_tmpl_id.mark_id',
         readonly=False,
-        store=True,
     )
 
-    grade = fields.Char(
-        related='product_tmpl_id.grade',
+    grade_id = fields.Many2one(
+        related='product_tmpl_id.grade_id',
         readonly=False,
-        store=True,
     )
 
-    @api.onchange('mark', 'grade', 'width', 'thickness')
+    @api.onchange('mark_id', 'grade_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
         if len(self.product_tmpl_id.product_variant_ids) != 1:
             return
         name = self.env['product.template']._panels_build_product_name(
-            self.mark, self.grade, self.thickness, self.width
+            self.mark_id.name, self.grade_id.name, self.thickness, self.width
         )
         if name:
             self.name = name
@@ -98,10 +131,15 @@ class ProductProduct(models.Model):
 
     def load(self, fields, data):
         """Ensure auto-name after Excel imports on variants."""
+        fields = list(fields or [])
+        data = [list(row) for row in data or []]
+        imported = _panels_import_base_fields(fields)
+        if PANELS_AUTO_NAME_FIELDS & imported:
+            _panels_prepare_import_rows(self.env, fields, data)
         res = super().load(fields, data)
         if self.env.context.get('skip_panels_auto_name'):
             return res
-        if not (PANELS_AUTO_NAME_FIELDS & set(fields or [])):
+        if not (PANELS_AUTO_NAME_FIELDS & imported):
             return res
         ids = _panels_load_result_ids(res)
         if not ids:
@@ -131,13 +169,19 @@ class ProductTemplate(models.Model):
     )
 
     # Canonical fields (persist on template even with multiple variants)
-    mark = fields.Char(
-        string="Mark",
+    mark_id = fields.Many2one(
+        'panels.product.mark',
+        string="نوع المنشار",
+        ondelete='restrict',
+        index=True,
         help="Used with Grade, thickness and width to build the product name automatically."
     )
 
-    grade = fields.Char(
-        string="Grade",
+    grade_id = fields.Many2one(
+        'panels.product.grade',
+        string="الدرجة",
+        ondelete='restrict',
+        index=True,
         help="Used with Mark, thickness and width to build the product name automatically."
     )
 
@@ -170,21 +214,27 @@ class ProductTemplate(models.Model):
     def _panels_apply_auto_name(self):
         self.ensure_one()
         name = self._panels_build_product_name(
-            self.mark, self.grade, self.thickness, self.width
+            self.mark_id.name, self.grade_id.name, self.thickness, self.width
         )
         if not name:
             return
-        self.with_context(skip_panels_auto_name=True).write({'name': name})
+        template = self.with_context(skip_panels_auto_name=True)
+        template.write({'name': name})
+        # The auto name is the same in every language: a write only updates the
+        # current one, which would leave e.g. the Arabic name stale after a
+        # rename done in English (or the reverse).
+        langs = {'en_US'} | {code for code, _label in self.env['res.lang'].get_installed()}
+        template.update_field_translations('name', dict.fromkeys(langs, name))
 
-    @api.onchange('mark', 'grade', 'width', 'thickness')
+    @api.onchange('mark_id', 'grade_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
         name = self._panels_build_product_name(
-            self.mark, self.grade, self.thickness, self.width
+            self.mark_id.name, self.grade_id.name, self.thickness, self.width
         )
         if name:
             self.name = name
 
-    @api.constrains('type', 'mark', 'grade', 'width', 'thickness')
+    @api.constrains('type', 'mark_id', 'grade_id', 'width', 'thickness')
     def _check_panels_dimensions_required(self):
         """Enforce the Mark - Grade - Thickness - Width naming pattern with no
         exceptions: a stock/goods product cannot be saved with any of the four
@@ -193,9 +243,9 @@ class ProductTemplate(models.Model):
             if template.type != 'consu':
                 continue
             missing = []
-            if not (template.mark or '').strip():
+            if not template.mark_id:
                 missing.append(_("Mark (نوع المنشار)"))
-            if not (template.grade or '').strip():
+            if not template.grade_id:
                 missing.append(_("Grade (الدرجة)"))
             if not template.width:
                 missing.append(_("Width (العرض)"))
@@ -232,10 +282,13 @@ class ProductTemplate(models.Model):
         before delegating to Odoo's import, then we also enforce auto-name after.
         """
         fields = list(fields or [])
-        data = list(data or [])
+        data = [list(row) for row in data or []]
+        imported = _panels_import_base_fields(fields)
 
-        # Pre-fill required `name` for create imports when it is missing/blank.
-        if PANELS_AUTO_NAME_FIELDS & set(fields):
+        if PANELS_AUTO_NAME_FIELDS & imported:
+            _panels_prepare_import_rows(self.env, fields, data)
+
+            # Pre-fill required `name` for create imports when it is missing/blank.
             name_idx = fields.index('name') if 'name' in fields else None
             if name_idx is None:
                 fields.append('name')
@@ -252,8 +305,8 @@ class ProductTemplate(models.Model):
                 if current not in (False, None, ''):
                     continue
                 computed = builder(
-                    row[idx.get('mark')] if 'mark' in idx else '',
-                    row[idx.get('grade')] if 'grade' in idx else '',
+                    row[idx.get('mark_id')] if 'mark_id' in idx else '',
+                    row[idx.get('grade_id')] if 'grade_id' in idx else '',
                     row[idx.get('thickness')] if 'thickness' in idx else '',
                     row[idx.get('width')] if 'width' in idx else '',
                 )
@@ -262,7 +315,7 @@ class ProductTemplate(models.Model):
         res = super().load(fields, data)
         if self.env.context.get('skip_panels_auto_name'):
             return res
-        if not (PANELS_AUTO_NAME_FIELDS & set(fields or [])):
+        if not (PANELS_AUTO_NAME_FIELDS & imported):
             return res
         ids = _panels_load_result_ids(res)
         if not ids:

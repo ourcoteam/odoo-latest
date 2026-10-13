@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Saw marks (نوع المنشار): the saved values offered in the product form -->
+    <record id="view_panels_product_mark_list" model="ir.ui.view">
+        <field name="name">panels.product.mark.list</field>
+        <field name="model">panels.product.mark</field>
+        <field name="arch" type="xml">
+            <list string="أنواع المناشير" editable="bottom">
+                <field name="name"/>
+                <field name="product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Only the name when creating; the product count is shown once the value exists -->
+    <record id="view_panels_product_mark_form" model="ir.ui.view">
+        <field name="name">panels.product.mark.form</field>
+        <field name="model">panels.product.mark</field>
+        <field name="arch" type="xml">
+            <form string="نوع المنشار">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_count" invisible="not id"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_panels_product_mark_search" model="ir.ui.view">
+        <field name="name">panels.product.mark.search</field>
+        <field name="model">panels.product.mark</field>
+        <field name="arch" type="xml">
+            <search string="أنواع المناشير">
+                <field name="name"/>
+                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_panels_product_mark" model="ir.actions.act_window">
+        <field name="name">أنواع المناشير</field>
+        <field name="res_model">panels.product.mark</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_panels_product_mark_search"/>
+    </record>
+
+    <!-- Grades (الدرجة) -->
+    <record id="view_panels_product_grade_list" model="ir.ui.view">
+        <field name="name">panels.product.grade.list</field>
+        <field name="model">panels.product.grade</field>
+        <field name="arch" type="xml">
+            <list string="الدرجات" editable="bottom">
+                <field name="name"/>
+                <field name="product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Only the name when creating; the product count is shown once the value exists -->
+    <record id="view_panels_product_grade_form" model="ir.ui.view">
+        <field name="name">panels.product.grade.form</field>
+        <field name="model">panels.product.grade</field>
+        <field name="arch" type="xml">
+            <form string="الدرجة">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_count" invisible="not id"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_panels_product_grade_search" model="ir.ui.view">
+        <field name="name">panels.product.grade.search</field>
+        <field name="model">panels.product.grade</field>
+        <field name="arch" type="xml">
+            <search string="الدرجات">
+                <field name="name"/>
+                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_panels_product_grade" model="ir.actions.act_window">
+        <field name="name">الدرجات</field>
+        <field name="res_model">panels.product.grade</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_panels_product_grade_search"/>
+    </record>
+
+    <!-- Inventory → Configuration → Products -->
+    <menuitem id="menu_panels_product_mark_stock" action="action_panels_product_mark"
+        parent="stock.menu_product_in_config_stock" sequence="10"/>
+    <menuitem id="menu_panels_product_grade_stock" action="action_panels_product_grade"
+        parent="stock.menu_product_in_config_stock" sequence="11"/>
+
+    <!-- Sales → Configuration → Products -->
+    <menuitem id="menu_panels_product_mark_sale" action="action_panels_product_mark"
+        parent="sale.prod_config_main" sequence="10"/>
+    <menuitem id="menu_panels_product_grade_sale" action="action_panels_product_grade"
+        parent="sale.prod_config_main" sequence="11"/>
+
+</odoo>
