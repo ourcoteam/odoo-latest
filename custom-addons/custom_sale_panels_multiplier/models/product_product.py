@@ -180,6 +180,7 @@ class ProductProduct(models.Model):
                 tmpl.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
         return res
 
+    @api.model
     def load(self, fields, data):
         """Ensure auto-name after Excel imports on variants."""
         fields = list(fields or [])
@@ -422,6 +423,7 @@ class ProductTemplate(models.Model):
                 template.with_context(skip_panels_auto_name=True)._panels_apply_auto_name()
         return res
 
+    @api.model
     def load(self, fields, data):
         """Ensure auto-name during/after Excel imports on templates.
 
