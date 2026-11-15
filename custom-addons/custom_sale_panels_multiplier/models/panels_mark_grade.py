@@ -20,7 +20,9 @@ class PanelsNamedValueMixin(models.AbstractModel):
     # Field on product.template that points at the concrete model.
     _panels_product_field = None
 
-    name = fields.Char(string="الاسم", required=True)
+    # Translatable: Arabic users see Arabic values (بياض، فنلندا) and the
+    # product name is built in each language from them.
+    name = fields.Char(string="الاسم", required=True, translate=True)
     active = fields.Boolean(string="نشط", default=True)
     product_count = fields.Integer(string="عدد المنتجات", compute='_compute_product_count')
 
@@ -41,13 +43,18 @@ class PanelsNamedValueMixin(models.AbstractModel):
 
     @api.model
     def _panels_find_by_name(self, name):
-        """Case/space-insensitive lookup, archived values included."""
+        """Case/space-insensitive lookup in English and in the user's language
+        (a sheet may say "Whitewood" or "بياض"), archived values included."""
         clean = panels_clean_name(name)
         if not clean:
             return self.browse()
-        return self.with_context(active_test=False).search(
-            [('name', '=ilike', escape_psql(clean))], limit=1,
-        )
+        for lang in dict.fromkeys(('en_US', self.env.lang or 'en_US')):
+            record = self.with_context(active_test=False, lang=lang).search(
+                [('name', '=ilike', escape_psql(clean))], limit=1,
+            )
+            if record:
+                return record.with_context(lang=self.env.lang)
+        return self.browse()
 
     @api.model
     def _panels_get_or_create(self, name):
@@ -60,12 +67,23 @@ class PanelsNamedValueMixin(models.AbstractModel):
         return self.create({'name': name})
 
     @api.model
-    def _panels_seed(self, names):
+    def _panels_seed(self, names, arabic=None):
         """Add the standard values from the client's spec, skipping any that
-        already exist (archived ones stay archived)."""
+        already exist (archived ones stay archived). `arabic` maps an English
+        name to its Arabic name, set only while the Arabic one is untouched."""
+        arabic = arabic or {}
+        ar_langs = [code for code, _label in self.env['res.lang'].get_installed()
+                    if code.startswith('ar')]
         for name in names:
-            if not self._panels_find_by_name(name):
-                self.create({'name': name})
+            record = self.with_context(lang='en_US')._panels_find_by_name(name)
+            if not record:
+                record = self.with_context(lang='en_US').create({'name': name})
+            if name in arabic and ar_langs:
+                english = record.with_context(lang='en_US').name
+                langs = [lang for lang in ar_langs
+                         if record.with_context(lang=lang).name == english]
+                if langs:
+                    record.update_field_translations('name', dict.fromkeys(langs, arabic[name]))
 
     @api.model
     def name_create(self, name):
@@ -106,7 +124,7 @@ class PanelsProductMark(models.Model):
     _panels_product_field = 'mark_id'
 
     _name_uniq = models.UniqueIndex(
-        '(lower(name))',
+        "(lower(name->>'en_US'))",
         "هذا المنشار موجود بالفعل.",
     )
 
@@ -135,7 +153,7 @@ class PanelsProductGrade(models.Model):
     _panels_product_field = 'grade_id'
 
     _name_uniq = models.UniqueIndex(
-        '(lower(name))',
+        "(lower(name->>'en_US'))",
         "هذه الدرجة موجودة بالفعل.",
     )
 
@@ -160,7 +178,7 @@ class PanelsProductKind(models.Model):
     code = fields.Char(string="الاختصار")
 
     _name_uniq = models.UniqueIndex(
-        '(lower(name))',
+        "(lower(name->>'en_US'))",
         "نوع الخشب هذا موجود بالفعل.",
     )
     _code_uniq = models.UniqueIndex(
@@ -182,9 +200,11 @@ class PanelsProductKind(models.Model):
 
     @api.model
     def _panels_seed_defaults(self):
-        self._panels_seed(['Whitewood', 'Redwood', 'Zaan', 'Fillery'])
+        self._panels_seed(['Whitewood', 'Redwood', 'Zaan', 'Fillery'], arabic={
+            'Whitewood': 'بياض', 'Redwood': 'سويد', 'Zaan': 'زان', 'Fillery': 'فلليري',
+        })
         for name, code in (('Whitewood', 'WW'), ('Redwood', 'RW')):
-            kind = self._panels_find_by_name(name)
+            kind = self.with_context(lang='en_US')._panels_find_by_name(name)
             if kind and not kind.code and not self.with_context(active_test=False).search_count(
                     [('code', '=ilike', code)]):
                 kind.code = code
@@ -199,16 +219,18 @@ class PanelsProductOrigin(models.Model):
     _panels_product_field = 'origin_id'
 
     _name_uniq = models.UniqueIndex(
-        '(lower(name))',
+        "(lower(name->>'en_US'))",
         "هذا المنشأ موجود بالفعل.",
     )
 
     @api.model
     def _panels_seed_defaults(self):
-        self._panels_seed([
-            'Finland', 'Russia', 'Germany', 'Romania', 'Canada', 'Sweden',
-            'Latvia', 'Estonia',
-        ])
+        arabic = {
+            'Finland': 'فنلندا', 'Russia': 'روسيا', 'Germany': 'ألمانيا',
+            'Romania': 'رومانيا', 'Canada': 'كندا', 'Sweden': 'السويد',
+            'Latvia': 'لاتفيا', 'Estonia': 'إستونيا',
+        }
+        self._panels_seed(list(arabic), arabic=arabic)
 
 
 class PanelsProductSubtype(models.Model):
@@ -221,7 +243,7 @@ class PanelsProductSubtype(models.Model):
     _panels_product_field = 'subtype_id'
 
     _name_uniq = models.UniqueIndex(
-        '(lower(name))',
+        "(lower(name->>'en_US'))",
         "هذا النوع موجود بالفعل.",
     )
 

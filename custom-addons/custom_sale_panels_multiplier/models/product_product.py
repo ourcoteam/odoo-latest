@@ -19,8 +19,10 @@ PANELS_IMPORT_VALUE_MODELS = (
 PANELS_AUTO_NAME_FIELDS = frozenset(
     [field for field, _model in PANELS_IMPORT_VALUE_MODELS] + ['drying', 'width', 'thickness']
 )
-PANELS_DRYING_SELECTION = [('kd', 'KD'), ('ad', 'AD'), ('none', 'None')]
+PANELS_DRYING_SELECTION = [('kd', 'KD (مجفف)'), ('ad', 'AD (مبلل)'), ('none', 'None (بدون)')]
+# Drying as written in the product name, per language (None is left out).
 PANELS_DRYING_LABELS = {'kd': 'KD', 'ad': 'AD'}
+PANELS_DRYING_LABELS_AR = {'kd': 'مجفف', 'ad': 'مبلل'}
 
 def _panels_load_result_ids(load_result):
     """Extract ids from `load()` result across Odoo versions."""
@@ -56,6 +58,9 @@ def _panels_prepare_import_rows(env, fields, data):
         col = fields.index('drying')
         keys = {key: key for key, _label in PANELS_DRYING_SELECTION}
         keys.update({label.lower(): key for key, label in PANELS_DRYING_SELECTION})
+        keys.update({label.split(' ')[0].lower(): key for key, label in PANELS_DRYING_SELECTION})
+        keys.update({label: key for key, label in PANELS_DRYING_LABELS_AR.items()})
+        keys['بدون'] = 'none'
         for row in data:
             value = row[col] if col < len(row) else ''
             text = str(value or '').strip().lower()
@@ -301,10 +306,13 @@ class ProductTemplate(models.Model):
 
     @api.model
     def _panels_build_product_name(self, kind, drying, origin, sawmill, grade, subtype,
-                                   thickness, width):
-        """Build 'Whitewood KD Finland Norra V 22x100': empty parts are skipped,
-        the size only shows when both thickness and width are set."""
-        parts = [(kind or '').strip(), PANELS_DRYING_LABELS.get(drying, '')]
+                                   thickness, width, lang=None):
+        """Build 'Whitewood KD Finland Norra V 22x100' ('بياض مجفف فنلندا ...'
+        in Arabic): empty parts are skipped, the size only shows when both
+        thickness and width are set."""
+        lang = lang or self.env.lang or 'en_US'
+        drying_labels = PANELS_DRYING_LABELS_AR if lang.startswith('ar') else PANELS_DRYING_LABELS
+        parts = [(kind or '').strip(), drying_labels.get(drying, '')]
         parts += [(value or '').strip() for value in (origin, sawmill, grade, subtype)]
         t = _panels_format_dimension_number(self.env, thickness)
         w = _panels_format_dimension_number(self.env, width)
@@ -325,20 +333,23 @@ class ProductTemplate(models.Model):
         )
 
     def _panels_apply_auto_name(self):
+        """Set the name in every installed language, each built from the
+        values' names in that language (a write would only set the current one)."""
         self.ensure_one()
-        name = self._panels_build_product_name(
-            self.kind_id.name, self.drying, self.origin_id.name, self.mark_id.name,
-            self.grade_id.name, self.subtype_id.name, self.thickness, self.width,
-        )
-        if not name:
-            return
-        template = self.with_context(skip_panels_auto_name=True)
-        template.write({'name': name})
-        # The auto name is the same in every language: a write only updates the
-        # current one, which would leave e.g. the Arabic name stale after a
-        # rename done in English (or the reverse).
-        langs = {'en_US'} | {code for code, _label in self.env['res.lang'].get_installed()}
-        template.update_field_translations('name', dict.fromkeys(langs, name))
+        langs = ['en_US'] + [code for code, _label in self.env['res.lang'].get_installed()
+                             if code != 'en_US']
+        names = {}
+        for lang in langs:
+            template = self.with_context(lang=lang)
+            name = self._panels_build_product_name(
+                template.kind_id.name, template.drying, template.origin_id.name,
+                template.mark_id.name, template.grade_id.name, template.subtype_id.name,
+                template.thickness, template.width, lang=lang,
+            )
+            if name:
+                names[lang] = name
+        if names:
+            self.with_context(skip_panels_auto_name=True).update_field_translations('name', names)
 
     @api.onchange('kind_id', 'drying', 'origin_id', 'mark_id', 'grade_id', 'subtype_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
