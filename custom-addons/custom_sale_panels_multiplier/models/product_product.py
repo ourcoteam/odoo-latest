@@ -305,6 +305,15 @@ class ProductTemplate(models.Model):
             )
 
     @api.model
+    def get_import_templates(self):
+        # Timber template first: Arabic headers = field labels, so the import
+        # maps every column by itself; no name column (it is built).
+        return [{
+            'label': "قالب استيراد أصناف الخشب",
+            'template': '/custom_sale_panels_multiplier/static/xls/product_template_timber.xlsx',
+        }] + super().get_import_templates()
+
+    @api.model
     def _panels_build_product_name(self, kind, drying, origin, sawmill, grade, subtype,
                                    thickness, width, lang=None):
         """Build 'Whitewood KD Finland Norra V 22x100' ('بياض مجفف فنلندا ...'
