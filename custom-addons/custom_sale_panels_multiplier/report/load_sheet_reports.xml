@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Driver load sheet (قسيمة صرف بدون أسعار): what is loaded on the truck,
+         laid out like the client's paper slip (العدد | البيان | المكعب), with
+         the page 9 driver details and signatures. Never shows any price. -->
+    <record id="action_report_load_sheet" model="ir.actions.report">
+        <field name="name">قسيمة صرف (بدون أسعار)</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_sale_panels_multiplier.report_load_sheet</field>
+        <field name="report_file">custom_sale_panels_multiplier.report_load_sheet</field>
+        <field name="print_report_name">'قسيمة صرف - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_load_sheet_document">
+        <t t-call="web.external_layout">
+            <t t-set="lines" t-value="[move._panels_load_sheet_line() for move in doc.move_ids.filtered(lambda m: m.state != 'cancel')]"/>
+            <div class="page" dir="rtl" style="text-align: right;">
+                <h2 class="text-center">قسيمة صرف</h2>
+                <p class="text-center"><span t-field="doc.name"/></p>
+
+                <table class="table table-sm table-borderless mb-3" name="load_sheet_header">
+                    <tr>
+                        <td style="width: 50%;">
+                            <strong>التاريخ: </strong>
+                            <span t-out="doc.date_done or doc.scheduled_date" t-options='{"widget": "date"}'/>
+                        </td>
+                        <td>
+                            <strong>المخزن: </strong>
+                            <span t-out="doc.picking_type_id.warehouse_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>اسم العميل: </strong>
+                            <span t-out="doc.partner_id.commercial_partner_id.name"/>
+                        </td>
+                        <td>
+                            <strong>المستند: </strong>
+                            <span t-out="doc.origin"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>اسم السائق: </strong>
+                            <span t-out="doc.panels_driver_name"/>
+                        </td>
+                        <td>
+                            <strong>رقم السيارة: </strong>
+                            <span t-out="doc.panels_vehicle_plate"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <strong>رقم رخصة القيادة: </strong>
+                            <span t-out="doc.panels_driver_license"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table table-sm table-bordered" name="load_sheet_lines">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 12%;">العدد</th>
+                            <th>البيان</th>
+                            <th class="text-center" style="width: 18%;">المكعب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="lines" t-as="line">
+                            <td class="text-center"><span t-out="line['panels'] or ''"/></td>
+                            <td>
+                                <span t-out="line['product']"/>
+                                <div t-if="line['sizes']" class="text-muted small">
+                                    <span t-out="line['sizes']"/>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span t-out="line['qty']" t-options='{"widget": "float", "precision": 3}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td class="text-center"><span t-out="sum(line['panels'] for line in lines) or ''"/></td>
+                            <td>الإجمالي</td>
+                            <td class="text-center">
+                                <span t-out="sum(line['qty'] for line in lines)" t-options='{"widget": "float", "precision": 3}'/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <table class="table table-borderless mt-5" name="load_sheet_signatures">
+                    <tr>
+                        <td style="width: 50%;">
+                            <strong>المراجع: </strong><span t-out="doc.panels_reviewer"/>
+                            <div class="mt-4">التوقيع: ....................</div>
+                        </td>
+                        <td>
+                            <strong>أمين المخزن: </strong><span t-out="doc.panels_warehouse_keeper"/>
+                            <div class="mt-4">التوقيع: ....................</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="pt-4"><strong>استلام العميل: </strong>....................</td>
+                        <td class="pt-4"><strong>استلام السائق: </strong>....................</td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_load_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="custom_sale_panels_multiplier.report_load_sheet_document" t-lang="doc.env.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

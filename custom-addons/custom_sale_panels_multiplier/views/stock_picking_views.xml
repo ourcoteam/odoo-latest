@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Driver / loading details on deliveries, printed on the load sheet.
+         Kept editable after validation: they are often known only once the
+         truck is loaded. -->
+    <record id="view_picking_form_inherit_panels_driver" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.panels.driver</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="picking_properties" position="before">
+                <group string="بيانات التحميل" name="panels_driver" invisible="picking_type_code != 'outgoing'">
+                    <group>
+                        <field name="panels_driver_name"/>
+                        <field name="panels_vehicle_plate"/>
+                        <field name="panels_driver_license"/>
+                    </group>
+                    <group>
+                        <field name="panels_reviewer"/>
+                        <field name="panels_warehouse_keeper"/>
+                    </group>
+                </group>
+            </field>
+        </field>
+    </record>
+
+</odoo>
