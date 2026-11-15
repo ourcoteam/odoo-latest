@@ -2,7 +2,7 @@
 # product.product + product.template extensions in one module file so fields
 # always load together (avoids upgrade errors if one file is missing on server).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import SQL, float_round
 from odoo.tools.float_utils import float_is_zero
@@ -357,20 +357,20 @@ class ProductTemplate(models.Model):
         for template in self:
             if template.type != 'consu':
                 continue
-            missing = []
-            if not template.kind_id:
-                missing.append(_("Wood type (نوع الخشب)"))
-            if not template.drying:
-                missing.append(_("Drying (التجفيف)"))
-            if not template.thickness:
-                missing.append(_("Thickness (السمك)"))
-            if not template.width:
-                missing.append(_("Width (العرض)"))
+            # The client works in Arabic only, so the message is written in Arabic.
+            missing = [
+                label for value, label in (
+                    (template.kind_id, "نوع الخشب"),
+                    (template.drying, "التجفيف"),
+                    (template.thickness, "السمك"),
+                    (template.width, "العرض"),
+                ) if not value
+            ]
             if missing:
-                raise ValidationError(_(
-                    "Wood type, Drying, Thickness and Width are required for goods "
-                    "so every product name follows the same pattern. Missing: %s"
-                ) % ', '.join(missing))
+                raise ValidationError(
+                    "يجب إدخال نوع الخشب والتجفيف والسمك والعرض للبضائع حتى يُكتب "
+                    "اسم المنتج بنفس الشكل. الناقص: %s" % '، '.join(missing)
+                )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -382,6 +382,11 @@ class ProductTemplate(models.Model):
             name = self._panels_name_from_vals(dict(vals, drying=vals.get('drying', 'none')))
             if name:
                 vals['name'] = name
+            elif vals.get('type', 'consu') == 'consu':
+                # Nothing to build a name from: use a placeholder so the save
+                # reaches the check above and shows what is missing, instead
+                # of a database error on the empty name.
+                vals['name'] = '-'
         records = super().create(vals_list)
         if not self.env.context.get('skip_panels_auto_name'):
             for template in records:
