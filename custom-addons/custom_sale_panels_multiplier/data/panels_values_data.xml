@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Standard values from the client's spec (Odoo Requirements OAG, section 2).
+         Only missing values are added, so renamed/archived ones are left alone. -->
+    <function model="panels.product.kind" name="_panels_seed_defaults"/>
+    <function model="panels.product.origin" name="_panels_seed_defaults"/>
+    <function model="panels.product.mark" name="_panels_seed_defaults"/>
+    <function model="panels.product.grade" name="_panels_seed_defaults"/>
+    <function model="panels.product.subtype" name="_panels_seed_defaults"/>
+</odoo>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Saw marks (نوع المنشار): the saved values offered in the product form -->
+    <!-- Sawmills (المنشار): the saved values offered in the product form -->
     <record id="view_panels_product_mark_list" model="ir.ui.view">
         <field name="name">panels.product.mark.list</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <list string="أنواع المناشير" editable="bottom">
+            <list string="المناشير" editable="bottom">
                 <field name="name"/>
                 <field name="product_count"/>
             </list>
@@ -18,7 +18,7 @@
         <field name="name">panels.product.mark.form</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <form string="نوع المنشار">
+            <form string="المنشار">
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -34,7 +34,7 @@
         <field name="name">panels.product.mark.search</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <search string="أنواع المناشير">
+            <search string="المناشير">
                 <field name="name"/>
                 <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
             </search>
@@ -42,7 +42,7 @@
     </record>
 
     <record id="action_panels_product_mark" model="ir.actions.act_window">
-        <field name="name">أنواع المناشير</field>
+        <field name="name">المناشير</field>
         <field name="res_model">panels.product.mark</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_mark_search"/>
@@ -95,16 +95,119 @@
         <field name="search_view_id" ref="view_panels_product_grade_search"/>
     </record>
 
+    <!-- Wood types (نوع الخشب) with the supplier abbreviation (WW, RW) -->
+    <record id="view_panels_product_kind_list" model="ir.ui.view">
+        <field name="name">panels.product.kind.list</field>
+        <field name="model">panels.product.kind</field>
+        <field name="arch" type="xml">
+            <list string="أنواع الخشب" editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_panels_product_kind_search" model="ir.ui.view">
+        <field name="name">panels.product.kind.search</field>
+        <field name="model">panels.product.kind</field>
+        <field name="arch" type="xml">
+            <search string="أنواع الخشب">
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_panels_product_kind" model="ir.actions.act_window">
+        <field name="name">أنواع الخشب</field>
+        <field name="res_model">panels.product.kind</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_panels_product_kind_search"/>
+    </record>
+
+    <!-- Origins (المنشأ) -->
+    <record id="view_panels_product_origin_list" model="ir.ui.view">
+        <field name="name">panels.product.origin.list</field>
+        <field name="model">panels.product.origin</field>
+        <field name="arch" type="xml">
+            <list string="المنشأ" editable="bottom">
+                <field name="name"/>
+                <field name="product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_panels_product_origin_search" model="ir.ui.view">
+        <field name="name">panels.product.origin.search</field>
+        <field name="model">panels.product.origin</field>
+        <field name="arch" type="xml">
+            <search string="المنشأ">
+                <field name="name"/>
+                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_panels_product_origin" model="ir.actions.act_window">
+        <field name="name">المنشأ</field>
+        <field name="res_model">panels.product.origin</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_panels_product_origin_search"/>
+    </record>
+
+    <!-- Sub-types (النوع), kept apart from the grade -->
+    <record id="view_panels_product_subtype_list" model="ir.ui.view">
+        <field name="name">panels.product.subtype.list</field>
+        <field name="model">panels.product.subtype</field>
+        <field name="arch" type="xml">
+            <list string="الأنواع" editable="bottom">
+                <field name="name"/>
+                <field name="product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_panels_product_subtype_search" model="ir.ui.view">
+        <field name="name">panels.product.subtype.search</field>
+        <field name="model">panels.product.subtype</field>
+        <field name="arch" type="xml">
+            <search string="الأنواع">
+                <field name="name"/>
+                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_panels_product_subtype" model="ir.actions.act_window">
+        <field name="name">الأنواع</field>
+        <field name="res_model">panels.product.subtype</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_panels_product_subtype_search"/>
+    </record>
+
     <!-- Inventory → Configuration → Products -->
+    <menuitem id="menu_panels_product_kind_stock" action="action_panels_product_kind"
+        parent="stock.menu_product_in_config_stock" sequence="8"/>
+    <menuitem id="menu_panels_product_origin_stock" action="action_panels_product_origin"
+        parent="stock.menu_product_in_config_stock" sequence="9"/>
     <menuitem id="menu_panels_product_mark_stock" action="action_panels_product_mark"
         parent="stock.menu_product_in_config_stock" sequence="10"/>
     <menuitem id="menu_panels_product_grade_stock" action="action_panels_product_grade"
         parent="stock.menu_product_in_config_stock" sequence="11"/>
+    <menuitem id="menu_panels_product_subtype_stock" action="action_panels_product_subtype"
+        parent="stock.menu_product_in_config_stock" sequence="12"/>
 
     <!-- Sales → Configuration → Products -->
+    <menuitem id="menu_panels_product_kind_sale" action="action_panels_product_kind"
+        parent="sale.prod_config_main" sequence="8"/>
+    <menuitem id="menu_panels_product_origin_sale" action="action_panels_product_origin"
+        parent="sale.prod_config_main" sequence="9"/>
     <menuitem id="menu_panels_product_mark_sale" action="action_panels_product_mark"
         parent="sale.prod_config_main" sequence="10"/>
     <menuitem id="menu_panels_product_grade_sale" action="action_panels_product_grade"
         parent="sale.prod_config_main" sequence="11"/>
+    <menuitem id="menu_panels_product_subtype_sale" action="action_panels_product_subtype"
+        parent="sale.prod_config_main" sequence="12"/>
 
 </odoo>

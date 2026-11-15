@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Saw mark (نوع المنشار) and grade (الدرجة) as reusable lists: the user picks a
-# saved value in the product form, or types a new one and creates it inline.
+# Timber name parts as reusable lists (wood type, origin, sawmill, grade,
+# sub-type): the user picks a saved value in the product form, or types a new
+# one and creates it inline.
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
@@ -59,6 +60,14 @@ class PanelsNamedValueMixin(models.AbstractModel):
         return self.create({'name': name})
 
     @api.model
+    def _panels_seed(self, names):
+        """Add the standard values from the client's spec, skipping any that
+        already exist (archived ones stay archived)."""
+        for name in names:
+            if not self._panels_find_by_name(name):
+                self.create({'name': name})
+
+    @api.model
     def name_create(self, name):
         # "Create" from the dropdown reuses an existing value typed with
         # different case/spacing instead of failing on the unique index.
@@ -91,15 +100,30 @@ class PanelsNamedValueMixin(models.AbstractModel):
 class PanelsProductMark(models.Model):
     _name = 'panels.product.mark'
     _inherit = 'panels.named.value.mixin'
-    _description = 'Panels Saw Mark'
+    _description = 'Panels Sawmill'
     _order = 'name'
 
     _panels_product_field = 'mark_id'
 
     _name_uniq = models.UniqueIndex(
         '(lower(name))',
-        "نوع المنشار هذا موجود بالفعل.",
+        "هذا المنشار موجود بالفعل.",
     )
+
+    @api.model
+    def _panels_seed_defaults(self):
+        self._panels_seed([
+            'Adelina', 'Anaika Wood', 'Andrewex', 'Astar', 'Balungstrads',
+            'Beliy Ruchey', 'Bergene Hollmas', 'Binderholz', 'Canadian', 'Ersaha',
+            'Fiskarheden', 'FM Timber', 'HAL', 'Hanasa', 'Hasa', 'Hedlunds', 'HJN',
+            'Holmen', 'Ingarp', 'IPO Wood', 'ISOJOEN', 'JPJ-WOOD', 'Junnikkala',
+            'Jutos', 'Kaivospuu', 'Karl Segerstrom', 'Keitele Timber K.T.S',
+            'Koskasine', 'LE', 'Luvia', 'Luze', 'Metsa', 'Moelven', 'NK Lundstorms',
+            'Nordana', 'Norra Timber', 'Orasko', 'Rodins', 'RWA', 'Sahakuto',
+            'Sandasa', 'SCA', 'Segezha', 'Setra Group', 'Sodra', 'Stenvalls',
+            'Stora Enso', 'UPM Timber', 'VersoWood', 'Viitala Forest', 'VLP',
+            'Wallans', 'Westas',
+        ])
 
 
 class PanelsProductGrade(models.Model):
@@ -114,3 +138,93 @@ class PanelsProductGrade(models.Model):
         '(lower(name))',
         "هذه الدرجة موجودة بالفعل.",
     )
+
+    @api.model
+    def _panels_seed_defaults(self):
+        self._panels_seed([
+            'O/S', 'V', 'VI', 'SF', 'VI DOM', 'Reject', 'Shaal EXP',
+            'Shaal EXP Blue', 'Shaal Mix', 'Shaal DOM', 'IV', 'DOM',
+        ])
+
+
+class PanelsProductKind(models.Model):
+    """Wood type (Whitewood, Redwood...): first part of the product name. The
+    abbreviation is how suppliers write it (e.g. "RW 25x100 Schaal KD")."""
+    _name = 'panels.product.kind'
+    _inherit = 'panels.named.value.mixin'
+    _description = 'Panels Wood Type'
+    _order = 'name'
+
+    _panels_product_field = 'kind_id'
+
+    code = fields.Char(string="الاختصار")
+
+    _name_uniq = models.UniqueIndex(
+        '(lower(name))',
+        "نوع الخشب هذا موجود بالفعل.",
+    )
+    _code_uniq = models.UniqueIndex(
+        '(lower(code)) WHERE code IS NOT NULL',
+        "هذا الاختصار مستخدم لنوع خشب آخر.",
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('code'):
+                vals['code'] = panels_clean_name(vals['code']).upper()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get('code'):
+            vals = dict(vals, code=panels_clean_name(vals['code']).upper())
+        return super().write(vals)
+
+    @api.model
+    def _panels_seed_defaults(self):
+        self._panels_seed(['Whitewood', 'Redwood', 'Zaan', 'Fillery'])
+        for name, code in (('Whitewood', 'WW'), ('Redwood', 'RW')):
+            kind = self._panels_find_by_name(name)
+            if kind and not kind.code and not self.with_context(active_test=False).search_count(
+                    [('code', '=ilike', code)]):
+                kind.code = code
+
+
+class PanelsProductOrigin(models.Model):
+    _name = 'panels.product.origin'
+    _inherit = 'panels.named.value.mixin'
+    _description = 'Panels Origin'
+    _order = 'name'
+
+    _panels_product_field = 'origin_id'
+
+    _name_uniq = models.UniqueIndex(
+        '(lower(name))',
+        "هذا المنشأ موجود بالفعل.",
+    )
+
+    @api.model
+    def _panels_seed_defaults(self):
+        self._panels_seed([
+            'Finland', 'Russia', 'Germany', 'Romania', 'Canada', 'Sweden',
+            'Latvia', 'Estonia',
+        ])
+
+
+class PanelsProductSubtype(models.Model):
+    """Sub-type kept apart from the grade (e.g. Fillery AD: Hasa Balta, OR)."""
+    _name = 'panels.product.subtype'
+    _inherit = 'panels.named.value.mixin'
+    _description = 'Panels Sub-type'
+    _order = 'name'
+
+    _panels_product_field = 'subtype_id'
+
+    _name_uniq = models.UniqueIndex(
+        '(lower(name))',
+        "هذا النوع موجود بالفعل.",
+    )
+
+    @api.model
+    def _panels_seed_defaults(self):
+        self._panels_seed(['Hasa Balta', 'Hasa Manshour', 'OR', 'AW', 'Canadian'])

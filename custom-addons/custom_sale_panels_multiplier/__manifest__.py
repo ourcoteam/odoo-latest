@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Custom Sale Panels Multiplier',
-    'version': '19.0.1.0.13',
+    'version': '19.0.1.0.14',
     'category': 'Sales',
     'summary': 'Add Number of Panels field in Sales Orders with impact on financial calculations',
     'description': """
@@ -46,6 +46,7 @@
     'data': [
         'data/decimal_precision_data.xml',
         'security/ir.model.access.csv',
+        'data/panels_values_data.xml',
         'views/panels_mark_grade_views.xml',
         'views/product_views.xml',
         'views/sale_order_views.xml',

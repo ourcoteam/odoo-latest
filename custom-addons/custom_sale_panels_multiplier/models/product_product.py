@@ -9,11 +9,18 @@ from odoo.tools.float_utils import float_is_zero
 
 from .panels_mark_grade import panels_clean_name
 
-PANELS_AUTO_NAME_FIELDS = frozenset({'mark_id', 'grade_id', 'width', 'thickness'})
 PANELS_IMPORT_VALUE_MODELS = (
+    ('kind_id', 'panels.product.kind'),
+    ('origin_id', 'panels.product.origin'),
     ('mark_id', 'panels.product.mark'),
     ('grade_id', 'panels.product.grade'),
+    ('subtype_id', 'panels.product.subtype'),
 )
+PANELS_AUTO_NAME_FIELDS = frozenset(
+    [field for field, _model in PANELS_IMPORT_VALUE_MODELS] + ['drying', 'width', 'thickness']
+)
+PANELS_DRYING_SELECTION = [('kd', 'KD'), ('ad', 'AD'), ('none', 'None')]
+PANELS_DRYING_LABELS = {'kd': 'KD', 'ad': 'AD'}
 
 def _panels_load_result_ids(load_result):
     """Extract ids from `load()` result across Odoo versions."""
@@ -37,13 +44,22 @@ def _panels_import_base_fields(fields):
 
 
 def _panels_prepare_import_rows(env, fields, data):
-    """Resolve Mark/Grade names in imported rows (in place).
+    """Normalize the timber columns of imported rows (in place).
 
     Odoo matches a Many2one cell by exact name only, so a sheet with a new
     value or a different case/spacing would fail. Reuse the saved value
     (unarchiving it if needed) or create it, and rewrite the cell to the
     stored spelling.
     """
+    if 'drying' in fields:
+        # Accept KD / AD / None in any case; an empty cell means None.
+        col = fields.index('drying')
+        keys = {key: key for key, _label in PANELS_DRYING_SELECTION}
+        keys.update({label.lower(): key for key, label in PANELS_DRYING_SELECTION})
+        for row in data:
+            value = row[col] if col < len(row) else ''
+            text = str(value or '').strip().lower()
+            row[col] = keys.get(text, value) if text else 'none'
     for field_name, model_name in PANELS_IMPORT_VALUE_MODELS:
         if field_name not in fields:
             continue
@@ -130,23 +146,21 @@ class ProductProduct(models.Model):
         digits='Panels Millimeter',
     )
 
-    # Keep mark/grade canonical on product.template; expose on variant as editable related.
-    mark_id = fields.Many2one(
-        related='product_tmpl_id.mark_id',
-        readonly=False,
-    )
+    # Keep the name parts canonical on product.template; expose on variant as editable related.
+    kind_id = fields.Many2one(related='product_tmpl_id.kind_id', readonly=False)
+    drying = fields.Selection(related='product_tmpl_id.drying', readonly=False)
+    origin_id = fields.Many2one(related='product_tmpl_id.origin_id', readonly=False)
+    mark_id = fields.Many2one(related='product_tmpl_id.mark_id', readonly=False)
+    grade_id = fields.Many2one(related='product_tmpl_id.grade_id', readonly=False)
+    subtype_id = fields.Many2one(related='product_tmpl_id.subtype_id', readonly=False)
 
-    grade_id = fields.Many2one(
-        related='product_tmpl_id.grade_id',
-        readonly=False,
-    )
-
-    @api.onchange('mark_id', 'grade_id', 'width', 'thickness')
+    @api.onchange('kind_id', 'drying', 'origin_id', 'mark_id', 'grade_id', 'subtype_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
         if len(self.product_tmpl_id.product_variant_ids) != 1:
             return
         name = self.env['product.template']._panels_build_product_name(
-            self.mark_id.name, self.grade_id.name, self.thickness, self.width
+            self.kind_id.name, self.drying, self.origin_id.name, self.mark_id.name,
+            self.grade_id.name, self.subtype_id.name, self.thickness, self.width,
         )
         if name:
             self.name = name
@@ -200,13 +214,35 @@ class ProductTemplate(models.Model):
         help="Product thickness - auto-fills in sale order line when product is selected."
     )
 
-    # Canonical fields (persist on template even with multiple variants)
-    mark_id = fields.Many2one(
-        'panels.product.mark',
-        string="نوع المنشار",
+    # Canonical name parts (persist on template even with multiple variants).
+    # Name: Type [KD/AD] Origin Sawmill Grade Sub-type ThicknessxWidth.
+    kind_id = fields.Many2one(
+        'panels.product.kind',
+        string="نوع الخشب",
         ondelete='restrict',
         index=True,
-        help="Used with Grade, thickness and width to build the product name automatically."
+        help="First part of the product name (e.g. Whitewood).",
+    )
+
+    drying = fields.Selection(
+        PANELS_DRYING_SELECTION,
+        string="التجفيف",
+        default='none',
+        help="KD (مجفف) or AD (مبلل); None = no drying, left out of the name.",
+    )
+
+    origin_id = fields.Many2one(
+        'panels.product.origin',
+        string="المنشأ",
+        ondelete='restrict',
+        index=True,
+    )
+
+    mark_id = fields.Many2one(
+        'panels.product.mark',
+        string="المنشار",
+        ondelete='restrict',
+        index=True,
     )
 
     grade_id = fields.Many2one(
@@ -214,7 +250,14 @@ class ProductTemplate(models.Model):
         string="الدرجة",
         ondelete='restrict',
         index=True,
-        help="Used with Mark, thickness and width to build the product name automatically."
+    )
+
+    subtype_id = fields.Many2one(
+        'panels.product.subtype',
+        string="النوع",
+        ondelete='restrict',
+        index=True,
+        help="Kept apart from the grade, e.g. Hasa Balta or OR for Fillery.",
     )
 
     supplier_company_id = fields.Many2one(
@@ -257,27 +300,35 @@ class ProductTemplate(models.Model):
             )
 
     @api.model
-    def _panels_build_product_name(self, mark, grade, thickness, width):
-        """Build name as: Mark - Grade - T - W (non-empty parts only)."""
-        parts = []
-        m = (mark or '').strip()
-        if m:
-            parts.append(m)
-        g = (grade or '').strip()
-        if g:
-            parts.append(g)
+    def _panels_build_product_name(self, kind, drying, origin, sawmill, grade, subtype,
+                                   thickness, width):
+        """Build 'Whitewood KD Finland Norra V 22x100': empty parts are skipped,
+        the size only shows when both thickness and width are set."""
+        parts = [(kind or '').strip(), PANELS_DRYING_LABELS.get(drying, '')]
+        parts += [(value or '').strip() for value in (origin, sawmill, grade, subtype)]
         t = _panels_format_dimension_number(self.env, thickness)
-        if t:
-            parts.append(t)
         w = _panels_format_dimension_number(self.env, width)
-        if w:
-            parts.append(w)
-        return ' - '.join(parts) if parts else ''
+        if t and w:
+            parts.append(f'{t}x{w}')
+        return ' '.join(part for part in parts if part)
+
+    @api.model
+    def _panels_name_from_vals(self, vals):
+        """Product name from create/import values (ids or names)."""
+        names = {}
+        for field, model in PANELS_IMPORT_VALUE_MODELS:
+            value = vals.get(field)
+            names[field] = value if isinstance(value, str) else self.env[model].browse(value).name
+        return self._panels_build_product_name(
+            names['kind_id'], vals.get('drying'), names['origin_id'], names['mark_id'],
+            names['grade_id'], names['subtype_id'], vals.get('thickness'), vals.get('width'),
+        )
 
     def _panels_apply_auto_name(self):
         self.ensure_one()
         name = self._panels_build_product_name(
-            self.mark_id.name, self.grade_id.name, self.thickness, self.width
+            self.kind_id.name, self.drying, self.origin_id.name, self.mark_id.name,
+            self.grade_id.name, self.subtype_id.name, self.thickness, self.width,
         )
         if not name:
             return
@@ -289,35 +340,36 @@ class ProductTemplate(models.Model):
         langs = {'en_US'} | {code for code, _label in self.env['res.lang'].get_installed()}
         template.update_field_translations('name', dict.fromkeys(langs, name))
 
-    @api.onchange('mark_id', 'grade_id', 'width', 'thickness')
+    @api.onchange('kind_id', 'drying', 'origin_id', 'mark_id', 'grade_id', 'subtype_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
         name = self._panels_build_product_name(
-            self.mark_id.name, self.grade_id.name, self.thickness, self.width
+            self.kind_id.name, self.drying, self.origin_id.name, self.mark_id.name,
+            self.grade_id.name, self.subtype_id.name, self.thickness, self.width,
         )
         if name:
             self.name = name
 
-    @api.constrains('type', 'mark_id', 'grade_id', 'width', 'thickness')
+    @api.constrains('type', 'kind_id', 'drying', 'width', 'thickness')
     def _check_panels_dimensions_required(self):
-        """Enforce the Mark - Grade - Thickness - Width naming pattern with no
-        exceptions: a stock/goods product cannot be saved with any of the four
-        parts missing, so the auto-built name never skips a segment."""
+        """Goods need a wood type, a drying choice (None is a valid choice) and
+        both sizes. Origin, sawmill, grade and sub-type are optional: products
+        without them skip that part of the name."""
         for template in self:
             if template.type != 'consu':
                 continue
             missing = []
-            if not template.mark_id:
-                missing.append(_("Mark (نوع المنشار)"))
-            if not template.grade_id:
-                missing.append(_("Grade (الدرجة)"))
-            if not template.width:
-                missing.append(_("Width (العرض)"))
+            if not template.kind_id:
+                missing.append(_("Wood type (نوع الخشب)"))
+            if not template.drying:
+                missing.append(_("Drying (التجفيف)"))
             if not template.thickness:
                 missing.append(_("Thickness (السمك)"))
+            if not template.width:
+                missing.append(_("Width (العرض)"))
             if missing:
                 raise ValidationError(_(
-                    "Mark, Grade, Width and Thickness are all required so every "
-                    "product name follows the same pattern. Missing: %s"
+                    "Wood type, Drying, Thickness and Width are required for goods "
+                    "so every product name follows the same pattern. Missing: %s"
                 ) % ', '.join(missing))
 
     @api.model_create_multi
@@ -327,11 +379,7 @@ class ProductTemplate(models.Model):
                 continue
             # The name field is readonly for goods: build the required name
             # here so a save never fails on it (form, API, quick create).
-            name = self._panels_build_product_name(
-                self.env['panels.product.mark'].browse(vals.get('mark_id')).name,
-                self.env['panels.product.grade'].browse(vals.get('grade_id')).name,
-                vals.get('thickness'), vals.get('width'),
-            )
+            name = self._panels_name_from_vals(dict(vals, drying=vals.get('drying', 'none')))
             if name:
                 vals['name'] = name
         records = super().create(vals_list)
@@ -353,7 +401,7 @@ class ProductTemplate(models.Model):
         """Ensure auto-name during/after Excel imports on templates.
 
         Import of new products requires `name`. If the sheet omits `name` (or
-        provides it blank), we auto-fill it from Mark/Grade/Thickness/Width
+        provides it blank), we auto-fill it from the timber fields
         before delegating to Odoo's import, then we also enforce auto-name after.
         """
         fields = list(fields or [])
@@ -371,7 +419,6 @@ class ProductTemplate(models.Model):
                 data = [list(row) + [''] for row in data]
 
             idx = {f: fields.index(f) for f in PANELS_AUTO_NAME_FIELDS if f in fields}
-            builder = self.env['product.template']._panels_build_product_name
 
             for row in data:
                 current = row[name_idx] if name_idx < len(row) else ''
@@ -379,13 +426,8 @@ class ProductTemplate(models.Model):
                     continue
                 if current not in (False, None, ''):
                     continue
-                computed = builder(
-                    row[idx.get('mark_id')] if 'mark_id' in idx else '',
-                    row[idx.get('grade_id')] if 'grade_id' in idx else '',
-                    row[idx.get('thickness')] if 'thickness' in idx else '',
-                    row[idx.get('width')] if 'width' in idx else '',
-                )
-                row[name_idx] = computed or 'Imported Product'
+                vals = {f: row[i] for f, i in idx.items()}
+                row[name_idx] = self._panels_name_from_vals(vals) or 'Imported Product'
 
         res = super().load(fields, data)
         if self.env.context.get('skip_panels_auto_name'):
