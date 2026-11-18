@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Driver load sheet (قسيمة صرف بدون أسعار): what is loaded on the truck,
-         laid out like the client's paper slip (العدد | البيان | المكعب), with
+    <!-- Driver load sheet (no prices): what is loaded on the truck,
+         laid out like the client's paper slip (panels | description | m³), with
          the page 9 driver details and signatures. Never shows any price. -->
     <record id="action_report_load_sheet" model="ir.actions.report">
-        <field name="name">قسيمة صرف (بدون أسعار)</field>
+        <field name="name">Load Sheet (No Prices)</field>
         <field name="model">stock.picking</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">custom_sale_panels_multiplier.report_load_sheet</field>
         <field name="report_file">custom_sale_panels_multiplier.report_load_sheet</field>
-        <field name="print_report_name">'قسيمة صرف - %s' % (object.name)</field>
+        <field name="print_report_name">('قسيمة صرف - %s' if (object.env.lang or '').startswith('ar') else 'Load Sheet - %s') % object.name</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
@@ -18,44 +18,45 @@
     <template id="report_load_sheet_document">
         <t t-call="web.external_layout">
             <t t-set="lines" t-value="[move._panels_load_sheet_line() for move in doc.move_ids.filtered(lambda m: m.state != 'cancel')]"/>
-            <div class="page" dir="rtl" style="text-align: right;">
-                <h2 class="text-center">قسيمة صرف</h2>
+            <t t-set="rtl" t-value="(doc.env.lang or '').startswith('ar')"/>
+            <div class="page" t-att-dir="'rtl' if rtl else 'ltr'" t-att-style="'text-align: right;' if rtl else 'text-align: left;'">
+                <h2 class="text-center">Load Sheet</h2>
                 <p class="text-center"><span t-field="doc.name"/></p>
 
                 <table class="table table-sm table-borderless mb-3" name="load_sheet_header">
                     <tr>
                         <td style="width: 50%;">
-                            <strong>التاريخ: </strong>
+                            <strong>Date: </strong>
                             <span t-out="doc.date_done or doc.scheduled_date" t-options='{"widget": "date"}'/>
                         </td>
                         <td>
-                            <strong>المخزن: </strong>
+                            <strong>Warehouse: </strong>
                             <span t-out="doc.picking_type_id.warehouse_id.name"/>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <strong>اسم العميل: </strong>
+                            <strong>Customer: </strong>
                             <span t-out="doc.partner_id.commercial_partner_id.name"/>
                         </td>
                         <td>
-                            <strong>المستند: </strong>
+                            <strong>Source Document: </strong>
                             <span t-out="doc.origin"/>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <strong>اسم السائق: </strong>
+                            <strong>Driver Name: </strong>
                             <span t-out="doc.panels_driver_name"/>
                         </td>
                         <td>
-                            <strong>رقم السيارة: </strong>
+                            <strong>Car Plate: </strong>
                             <span t-out="doc.panels_vehicle_plate"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <strong>رقم رخصة القيادة: </strong>
+                            <strong>Driver's Licence No.: </strong>
                             <span t-out="doc.panels_driver_license"/>
                         </td>
                     </tr>
@@ -64,9 +65,9 @@
                 <table class="table table-sm table-bordered" name="load_sheet_lines">
                     <thead>
                         <tr>
-                            <th class="text-center" style="width: 12%;">العدد</th>
-                            <th>البيان</th>
-                            <th class="text-center" style="width: 18%;">المكعب</th>
+                            <th class="text-center" style="width: 12%;">Panels</th>
+                            <th>Description</th>
+                            <th class="text-center" style="width: 18%;">m³</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -86,7 +87,7 @@
                     <tfoot>
                         <tr class="fw-bold">
                             <td class="text-center"><span t-out="sum(line['panels'] for line in lines) or ''"/></td>
-                            <td>الإجمالي</td>
+                            <td>Total</td>
                             <td class="text-center">
                                 <span t-out="sum(line['qty'] for line in lines)" t-options='{"widget": "float", "precision": 3}'/>
                             </td>
@@ -97,17 +98,17 @@
                 <table class="table table-borderless mt-5" name="load_sheet_signatures">
                     <tr>
                         <td style="width: 50%;">
-                            <strong>المراجع: </strong><span t-out="doc.panels_reviewer"/>
-                            <div class="mt-4">التوقيع: ....................</div>
+                            <strong>Reviewer: </strong><span t-out="doc.panels_reviewer"/>
+                            <div class="mt-4">Signature: ....................</div>
                         </td>
                         <td>
-                            <strong>أمين المخزن: </strong><span t-out="doc.panels_warehouse_keeper"/>
-                            <div class="mt-4">التوقيع: ....................</div>
+                            <strong>Warehouse Keeper: </strong><span t-out="doc.panels_warehouse_keeper"/>
+                            <div class="mt-4">Signature: ....................</div>
                         </td>
                     </tr>
                     <tr>
-                        <td class="pt-4"><strong>استلام العميل: </strong>....................</td>
-                        <td class="pt-4"><strong>استلام السائق: </strong>....................</td>
+                        <td class="pt-4"><strong>Received by Customer: </strong>....................</td>
+                        <td class="pt-4"><strong>Received by Driver: </strong>....................</td>
                     </tr>
                 </table>
             </div>

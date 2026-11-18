@@ -8,7 +8,7 @@ class SaleReport(models.Model):
 
     supplier_company_id = fields.Many2one(
         'res.partner',
-        string="الشركة المورّدة",
+        string="Supplier Company",
         readonly=True,
     )
 

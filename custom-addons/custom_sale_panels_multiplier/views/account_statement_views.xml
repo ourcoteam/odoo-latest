@@ -5,7 +5,7 @@
         <field name="name">account.statement.wizard.form</field>
         <field name="model">account.statement.wizard</field>
         <field name="arch" type="xml">
-            <form string="كشف حساب">
+            <form string="Statement of Account">
                 <field name="currency_id" invisible="1"/>
                 <group>
                     <group>
@@ -37,22 +37,22 @@
                     </list>
                 </field>
                 <footer>
-                    <button name="action_print_pdf" string="طباعة PDF" type="object" class="btn-primary" icon="fa-print"/>
-                    <button string="إغلاق" class="btn-secondary" special="cancel"/>
+                    <button name="action_print_pdf" string="Print PDF" type="object" class="btn-primary" icon="fa-print"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_account_statement_wizard" model="ir.actions.act_window">
-        <field name="name">كشف حساب</field>
+        <field name="name">Statement of Account</field>
         <field name="res_model">account.statement.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
 
     <menuitem id="menu_account_statement_wizard"
-        name="كشف حساب (Statement of Account)"
+        name="Statement of Account"
         parent="account.account_reports_partners_reports_menu"
         action="action_account_statement_wizard"
         sequence="1"/>

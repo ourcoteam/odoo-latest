@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Sawmills (المنشار): the saved values offered in the product form -->
+    <!-- Sawmills: the saved values offered in the product form -->
     <record id="view_panels_product_mark_list" model="ir.ui.view">
         <field name="name">panels.product.mark.list</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <list string="المناشير" editable="bottom">
+            <list string="Sawmills" editable="bottom">
                 <field name="name"/>
                 <field name="product_count"/>
             </list>
@@ -18,7 +18,7 @@
         <field name="name">panels.product.mark.form</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <form string="المنشار">
+            <form string="Sawmill">
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -34,26 +34,26 @@
         <field name="name">panels.product.mark.search</field>
         <field name="model">panels.product.mark</field>
         <field name="arch" type="xml">
-            <search string="المناشير">
+            <search string="Sawmills">
                 <field name="name"/>
-                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_panels_product_mark" model="ir.actions.act_window">
-        <field name="name">المناشير</field>
+        <field name="name">Sawmills</field>
         <field name="res_model">panels.product.mark</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_mark_search"/>
     </record>
 
-    <!-- Grades (الدرجة) -->
+    <!-- Grades -->
     <record id="view_panels_product_grade_list" model="ir.ui.view">
         <field name="name">panels.product.grade.list</field>
         <field name="model">panels.product.grade</field>
         <field name="arch" type="xml">
-            <list string="الدرجات" editable="bottom">
+            <list string="Grades" editable="bottom">
                 <field name="name"/>
                 <field name="product_count"/>
             </list>
@@ -65,7 +65,7 @@
         <field name="name">panels.product.grade.form</field>
         <field name="model">panels.product.grade</field>
         <field name="arch" type="xml">
-            <form string="الدرجة">
+            <form string="Grade">
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -81,28 +81,33 @@
         <field name="name">panels.product.grade.search</field>
         <field name="model">panels.product.grade</field>
         <field name="arch" type="xml">
-            <search string="الدرجات">
+            <search string="Grades">
                 <field name="name"/>
-                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_panels_product_grade" model="ir.actions.act_window">
-        <field name="name">الدرجات</field>
+        <field name="name">Grades</field>
         <field name="res_model">panels.product.grade</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_grade_search"/>
     </record>
 
-    <!-- Wood types (نوع الخشب) with the supplier abbreviation (WW, RW) -->
+    <!-- Wood types with the supplier abbreviation (WW, RW) -->
     <record id="view_panels_product_kind_list" model="ir.ui.view">
         <field name="name">panels.product.kind.list</field>
         <field name="model">panels.product.kind</field>
         <field name="arch" type="xml">
-            <list string="أنواع الخشب" editable="bottom">
+            <list string="Wood Types" editable="bottom">
                 <field name="name"/>
                 <field name="code"/>
+                <field name="uses_drying"/>
+                <field name="uses_origin"/>
+                <field name="uses_grade"/>
+                <field name="uses_subtype"/>
+                <field name="origin_ids" widget="many2many_tags" options="{'no_create': True}"/>
                 <field name="product_count"/>
             </list>
         </field>
@@ -112,27 +117,29 @@
         <field name="name">panels.product.kind.search</field>
         <field name="model">panels.product.kind</field>
         <field name="arch" type="xml">
-            <search string="أنواع الخشب">
+            <search string="Wood Types">
                 <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
-                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_panels_product_kind" model="ir.actions.act_window">
-        <field name="name">أنواع الخشب</field>
+        <field name="name">Wood Types</field>
         <field name="res_model">panels.product.kind</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_kind_search"/>
     </record>
 
-    <!-- Origins (المنشأ) -->
+    <!-- Origins -->
     <record id="view_panels_product_origin_list" model="ir.ui.view">
         <field name="name">panels.product.origin.list</field>
         <field name="model">panels.product.origin</field>
         <field name="arch" type="xml">
-            <list string="المنشأ" editable="bottom">
+            <list string="Origins" editable="bottom">
                 <field name="name"/>
+                <field name="has_grades"/>
+                <field name="grade_ids" widget="many2many_tags" options="{'no_create': True}" invisible="not has_grades"/>
                 <field name="product_count"/>
             </list>
         </field>
@@ -142,26 +149,26 @@
         <field name="name">panels.product.origin.search</field>
         <field name="model">panels.product.origin</field>
         <field name="arch" type="xml">
-            <search string="المنشأ">
+            <search string="Origins">
                 <field name="name"/>
-                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_panels_product_origin" model="ir.actions.act_window">
-        <field name="name">المنشأ</field>
+        <field name="name">Origins</field>
         <field name="res_model">panels.product.origin</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_origin_search"/>
     </record>
 
-    <!-- Sub-types (النوع), kept apart from the grade -->
+    <!-- Sub-types, kept apart from the grade -->
     <record id="view_panels_product_subtype_list" model="ir.ui.view">
         <field name="name">panels.product.subtype.list</field>
         <field name="model">panels.product.subtype</field>
         <field name="arch" type="xml">
-            <list string="الأنواع" editable="bottom">
+            <list string="Sub-types" editable="bottom">
                 <field name="name"/>
                 <field name="product_count"/>
             </list>
@@ -172,15 +179,15 @@
         <field name="name">panels.product.subtype.search</field>
         <field name="model">panels.product.subtype</field>
         <field name="arch" type="xml">
-            <search string="الأنواع">
+            <search string="Sub-types">
                 <field name="name"/>
-                <filter string="مؤرشف" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_panels_product_subtype" model="ir.actions.act_window">
-        <field name="name">الأنواع</field>
+        <field name="name">Sub-types</field>
         <field name="res_model">panels.product.subtype</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_panels_product_subtype_search"/>

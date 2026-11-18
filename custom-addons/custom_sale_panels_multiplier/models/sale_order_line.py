@@ -11,26 +11,26 @@ class SaleOrderLine(models.Model):
     # ========== Fields ==========
 
     length = fields.Float(
-        string="الطول",
+        string="Length",
         digits='Panels Millimeter',
         help="Length - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
     width = fields.Float(
-        string="العرض",
+        string="Width",
         digits='Panels Millimeter',
         help="Width - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
     thickness = fields.Float(
-        string="السمك",
+        string="Thickness",
         digits='Panels Millimeter',
         help="Thickness - used to calculate volume. Volume = Length × Width × Thickness"
     )
 
     supplier_company_id = fields.Many2one(
         related='product_id.product_tmpl_id.supplier_company_id',
-        string="الشركة المورّدة",
+        string="Supplier Company",
         store=True,
     )
 

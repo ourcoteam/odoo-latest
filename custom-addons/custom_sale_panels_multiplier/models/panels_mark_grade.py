@@ -3,7 +3,7 @@
 # sub-type): the user picks a saved value in the product form, or types a new
 # one and creates it inline.
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools.sql import escape_psql
 
@@ -20,11 +20,11 @@ class PanelsNamedValueMixin(models.AbstractModel):
     # Field on product.template that points at the concrete model.
     _panels_product_field = None
 
-    # Translatable: Arabic users see Arabic values (بياض، فنلندا) and the
+    # Translatable: Arabic users see Arabic values (e.g. Whitewood in Arabic) and the
     # product name is built in each language from them.
-    name = fields.Char(string="الاسم", required=True, translate=True)
-    active = fields.Boolean(string="نشط", default=True)
-    product_count = fields.Integer(string="عدد المنتجات", compute='_compute_product_count')
+    name = fields.Char(string="Name", required=True, translate=True)
+    active = fields.Boolean(string="Active", default=True)
+    product_count = fields.Integer(string="Products", compute='_compute_product_count')
 
     def _compute_product_count(self):
         field = self._panels_product_field
@@ -39,12 +39,12 @@ class PanelsNamedValueMixin(models.AbstractModel):
     def _check_name_not_empty(self):
         for record in self:
             if not panels_clean_name(record.name):
-                raise ValidationError("الاسم مطلوب.")
+                raise ValidationError(_("The name is required."))
 
     @api.model
     def _panels_find_by_name(self, name):
         """Case/space-insensitive lookup in English and in the user's language
-        (a sheet may say "Whitewood" or "بياض"), archived values included."""
+        (a sheet may say the English or the Arabic name), archived values included."""
         clean = panels_clean_name(name)
         if not clean:
             return self.browse()
@@ -125,7 +125,7 @@ class PanelsProductMark(models.Model):
 
     _name_uniq = models.UniqueIndex(
         "(lower(name->>'en_US'))",
-        "هذا المنشار موجود بالفعل.",
+        "This sawmill already exists.",
     )
 
     @api.model
@@ -154,7 +154,7 @@ class PanelsProductGrade(models.Model):
 
     _name_uniq = models.UniqueIndex(
         "(lower(name->>'en_US'))",
-        "هذه الدرجة موجودة بالفعل.",
+        "This grade already exists.",
     )
 
     @api.model
@@ -175,15 +175,29 @@ class PanelsProductKind(models.Model):
 
     _panels_product_field = 'kind_id'
 
-    code = fields.Char(string="الاختصار")
+    code = fields.Char(string="Abbreviation")
+
+    # Which parts of the product name this wood type has (spec section 2):
+    # the product form only shows those, and saving checks them.
+    uses_drying = fields.Boolean(string="Uses KD/AD", default=True)
+    uses_origin = fields.Boolean(string="Uses Origin", default=True)
+    uses_grade = fields.Boolean(string="Uses Grade", default=True)
+    uses_subtype = fields.Boolean(
+        string="Uses Sub-type", default=False,
+        help="AD products of this wood type take a sub-type instead of a grade (Fillery).",
+    )
+    origin_ids = fields.Many2many(
+        'panels.product.origin', string="Origins",
+        help="Origins offered for this wood type. Empty = all.",
+    )
 
     _name_uniq = models.UniqueIndex(
         "(lower(name->>'en_US'))",
-        "نوع الخشب هذا موجود بالفعل.",
+        "This wood type already exists.",
     )
     _code_uniq = models.UniqueIndex(
         '(lower(code)) WHERE code IS NOT NULL',
-        "هذا الاختصار مستخدم لنوع خشب آخر.",
+        "This abbreviation is already used by another wood type.",
     )
 
     @api.model_create_multi
@@ -218,9 +232,15 @@ class PanelsProductOrigin(models.Model):
 
     _panels_product_field = 'origin_id'
 
+    has_grades = fields.Boolean(string="Has Grades", default=True)
+    grade_ids = fields.Many2many(
+        'panels.product.grade', string="Grades",
+        help="Grades offered for this origin. Empty = all.",
+    )
+
     _name_uniq = models.UniqueIndex(
         "(lower(name->>'en_US'))",
-        "هذا المنشأ موجود بالفعل.",
+        "This origin already exists.",
     )
 
     @api.model
@@ -244,9 +264,55 @@ class PanelsProductSubtype(models.Model):
 
     _name_uniq = models.UniqueIndex(
         "(lower(name->>'en_US'))",
-        "هذا النوع موجود بالفعل.",
+        "This sub-type already exists.",
     )
 
     @api.model
     def _panels_seed_defaults(self):
         self._panels_seed(['Hasa Balta', 'Hasa Manshour', 'OR', 'AW', 'Canadian'])
+
+
+# Spec section 2 (Odoo Requirements OAG): parts of the name per wood type,
+# origins per wood type and grades per origin. Applied once (install /
+# 19.0.1.0.20 upgrade); afterwards they are edited from the configuration lists.
+PANELS_SPEC_KINDS = {
+    'Whitewood': {'uses_drying': True, 'uses_origin': True, 'uses_grade': True, 'uses_subtype': False,
+                  'origins': ['Finland', 'Russia', 'Germany', 'Romania']},
+    'Redwood': {'uses_drying': False, 'uses_origin': True, 'uses_grade': True, 'uses_subtype': False,
+                'origins': ['Finland', 'Russia']},
+    'Zaan': {'uses_drying': False, 'uses_origin': False, 'uses_grade': False, 'uses_subtype': False,
+             'origins': []},
+    'Fillery': {'uses_drying': True, 'uses_origin': True, 'uses_grade': False, 'uses_subtype': True,
+                'origins': ['Canada', 'Finland', 'Russia', 'Sweden', 'Latvia', 'Estonia']},
+}
+PANELS_SPEC_ORIGIN_GRADES = {
+    'Finland': ['O/S', 'V', 'VI', 'SF', 'VI DOM', 'Reject', 'Shaal EXP', 'Shaal EXP Blue',
+                'Shaal Mix', 'Shaal DOM'],
+    'Russia': ['IV', 'V', 'DOM'],
+    'Germany': None,  # no grades
+    'Romania': None,
+}
+
+
+def panels_apply_spec_rules(env):
+    """Set the spec rules on the standard wood types and origins."""
+    env = env(context=dict(env.context, lang='en_US', active_test=False))
+    Origin, Grade = env['panels.product.origin'], env['panels.product.grade']
+    for name, rules in PANELS_SPEC_KINDS.items():
+        kind = env['panels.product.kind']._panels_find_by_name(name)
+        if not kind:
+            continue
+        origins = Origin.browse([Origin._panels_find_by_name(o).id for o in rules['origins']]).exists()
+        kind.write(dict(
+            {key: value for key, value in rules.items() if key != 'origins'},
+            origin_ids=[(6, 0, origins.ids)],
+        ))
+    for name, grades in PANELS_SPEC_ORIGIN_GRADES.items():
+        origin = Origin._panels_find_by_name(name)
+        if not origin:
+            continue
+        if grades is None:
+            origin.write({'has_grades': False, 'grade_ids': [(5,)]})
+        else:
+            found = Grade.browse([Grade._panels_find_by_name(g).id for g in grades]).exists()
+            origin.write({'has_grades': True, 'grade_ids': [(6, 0, found.ids)]})

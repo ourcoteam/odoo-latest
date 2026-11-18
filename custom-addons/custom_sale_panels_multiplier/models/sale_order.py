@@ -7,13 +7,13 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     show_volume = fields.Boolean(
-        string="إظهار Volume",
+        string="Show Volume",
         default=True,
         help="Enable to show Volume field in order lines.",
     )
 
     total_qty_m3 = fields.Float(
-        string="إجمالي الكمية m³",
+        string="Total Quantity m³",
         compute='_compute_total_qty_m3',
         digits='Panels Quantity m3',
     )

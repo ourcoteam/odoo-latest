@@ -9,25 +9,40 @@
         <field name="arch" type="xml">
             <!-- Add Width and Thickness in General Information tab before Internal Notes -->
             <xpath expr="//group[@name='internal_notes']" position="before">
-                <group string="الأبعاد" name="group_dimensions" invisible="type != 'consu'">
+                <group string="Dimensions" name="group_dimensions" invisible="type != 'consu'">
                     <group>
                         <!-- Pick a saved value, or type a new one and choose "Create" to save it.
-                             Order = order in the product name. -->
+                             Order = order in the product name. Each wood type only shows
+                             the parts it has (spec section 2) and the origins / grades it
+                             offers; an empty list in the configuration means "all". -->
+                        <field name="panels_uses_drying" invisible="1"/>
+                        <field name="panels_uses_origin" invisible="1"/>
+                        <field name="panels_uses_grade" invisible="1"/>
+                        <field name="panels_uses_subtype" invisible="1"/>
+                        <field name="panels_allowed_origin_ids" invisible="1"/>
+                        <field name="panels_origin_has_grades" invisible="1"/>
+                        <field name="panels_allowed_grade_ids" invisible="1"/>
                         <field name="kind_id" required="type == 'consu'" options="{'no_create_edit': True, 'no_open': True}"/>
-                        <field name="drying" required="type == 'consu'" widget="radio" options="{'horizontal': true}"/>
-                        <field name="origin_id" options="{'no_create_edit': True, 'no_open': True}"/>
+                        <field name="drying" required="type == 'consu'" widget="radio" options="{'horizontal': true}"
+                               invisible="not panels_uses_drying"/>
+                        <field name="origin_id" options="{'no_create_edit': True, 'no_open': True}"
+                               invisible="not panels_uses_origin"
+                               domain="[('id', 'in', panels_allowed_origin_ids)] if panels_allowed_origin_ids else []"/>
                         <field name="mark_id" options="{'no_create_edit': True, 'no_open': True}"/>
-                        <field name="grade_id" options="{'no_create_edit': True, 'no_open': True}"/>
-                        <field name="subtype_id" options="{'no_create_edit': True, 'no_open': True}"/>
+                        <field name="grade_id" options="{'no_create_edit': True, 'no_open': True}"
+                               invisible="not panels_uses_grade or (origin_id and not panels_origin_has_grades)"
+                               domain="[('id', 'in', panels_allowed_grade_ids)] if panels_allowed_grade_ids else []"/>
+                        <field name="subtype_id" options="{'no_create_edit': True, 'no_open': True}"
+                               invisible="not panels_uses_subtype or drying != 'ad'"/>
                         <label for="width"/>
                         <div class="o_row">
-                            <field name="width" string="العرض" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
+                            <field name="width" string="Width" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
                         </div>
                         <label for="thickness"/>
                         <div class="o_row">
-                            <field name="thickness" string="السمك" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
+                            <field name="thickness" string="Thickness" class="oe_inline" style="max-width: 7rem;" required="type == 'consu'"/>
                         </div>
-                        <field name="supplier_company_id" string="الشركة المورّدة"/>
+                        <field name="supplier_company_id" string="Supplier Company"/>
                     </group>
                 </group>
             </xpath>
@@ -51,42 +66,42 @@
         <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
             <field name="product_tag_ids" position="after">
-                <field name="supplier_company_id" string="الشركة المورّدة"/>
+                <field name="supplier_company_id" string="Supplier Company"/>
                 <field name="kind_id" filter_domain="['|', ('kind_id.name', 'ilike', self), ('kind_id.code', 'ilike', self)]"/>
                 <field name="origin_id"/>
                 <field name="mark_id"/>
                 <field name="grade_id"/>
                 <field name="subtype_id"/>
-                <field name="panels_thickness_filter" string="السمك"/>
-                <field name="panels_width_filter" string="العرض"/>
-                <field name="panels_dimensions" string="الأبعاد"/>
+                <field name="panels_thickness_filter" string="Thickness"/>
+                <field name="panels_width_filter" string="Width"/>
+                <field name="panels_dimensions" string="Dimensions"/>
             </field>
             <group position="inside">
-                <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
-                <filter string="نوع الخشب" name="group_by_kind" context="{'group_by': 'kind_id'}"/>
-                <filter string="التجفيف" name="group_by_drying" context="{'group_by': 'drying'}"/>
-                <filter string="المنشأ" name="group_by_origin" context="{'group_by': 'origin_id'}"/>
-                <filter string="المنشار" name="group_by_mark" context="{'group_by': 'mark_id'}"/>
-                <filter string="الدرجة" name="group_by_grade" context="{'group_by': 'grade_id'}"/>
-                <filter string="النوع" name="group_by_subtype" context="{'group_by': 'subtype_id'}"/>
-                <filter string="السمك" name="group_by_thickness" context="{'group_by': 'panels_thickness_filter'}"/>
-                <filter string="العرض" name="group_by_width" context="{'group_by': 'panels_width_filter'}"/>
-                <filter string="الأبعاد (السمك × العرض)" name="group_by_dimensions" context="{'group_by': 'panels_dimensions'}"/>
+                <filter string="Supplier Company" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
+                <filter string="Wood Type" name="group_by_kind" context="{'group_by': 'kind_id'}"/>
+                <filter string="Drying" name="group_by_drying" context="{'group_by': 'drying'}"/>
+                <filter string="Origin" name="group_by_origin" context="{'group_by': 'origin_id'}"/>
+                <filter string="Sawmill" name="group_by_mark" context="{'group_by': 'mark_id'}"/>
+                <filter string="Grade" name="group_by_grade" context="{'group_by': 'grade_id'}"/>
+                <filter string="Sub-type" name="group_by_subtype" context="{'group_by': 'subtype_id'}"/>
+                <filter string="Thickness" name="group_by_thickness" context="{'group_by': 'panels_thickness_filter'}"/>
+                <filter string="Width" name="group_by_width" context="{'group_by': 'panels_width_filter'}"/>
+                <filter string="Dimensions (Thickness × Width)" name="group_by_dimensions" context="{'group_by': 'panels_dimensions'}"/>
             </group>
             <!-- Timber filters sidebar: tick any mix of values; values within a
                  section are OR-ed, sections are AND-ed, counts follow the
                  other active filters. -->
             <xpath expr="/search" position="inside">
                 <searchpanel>
-                    <field name="kind_id" string="نوع الخشب" select="multi" enable_counters="1" icon="fa-tree"/>
-                    <field name="drying" string="التجفيف" select="multi" enable_counters="1" icon="fa-tint"/>
-                    <field name="origin_id" string="المنشأ" select="multi" enable_counters="1" icon="fa-globe"/>
-                    <field name="mark_id" string="المنشار" select="multi" enable_counters="1" icon="fa-scissors"/>
-                    <field name="grade_id" string="الدرجة" select="multi" enable_counters="1" icon="fa-certificate"/>
-                    <field name="subtype_id" string="النوع" select="multi" enable_counters="1" icon="fa-tag"/>
-                    <field name="panels_thickness_filter" string="السمك" select="multi" enable_counters="1" icon="fa-arrows-v"/>
-                    <field name="panels_width_filter" string="العرض" select="multi" enable_counters="1" icon="fa-arrows-h"/>
-                    <field name="supplier_company_id" string="الشركة المورّدة" select="multi" enable_counters="1" icon="fa-building"/>
+                    <field name="kind_id" string="Wood Type" select="multi" enable_counters="1" icon="fa-tree"/>
+                    <field name="drying" string="Drying" select="multi" enable_counters="1" icon="fa-tint"/>
+                    <field name="origin_id" string="Origin" select="multi" enable_counters="1" icon="fa-globe"/>
+                    <field name="mark_id" string="Sawmill" select="multi" enable_counters="1" icon="fa-scissors"/>
+                    <field name="grade_id" string="Grade" select="multi" enable_counters="1" icon="fa-certificate"/>
+                    <field name="subtype_id" string="Sub-type" select="multi" enable_counters="1" icon="fa-tag"/>
+                    <field name="panels_thickness_filter" string="Thickness" select="multi" enable_counters="1" icon="fa-arrows-v"/>
+                    <field name="panels_width_filter" string="Width" select="multi" enable_counters="1" icon="fa-arrows-h"/>
+                    <field name="supplier_company_id" string="Supplier Company" select="multi" enable_counters="1" icon="fa-building"/>
                 </searchpanel>
             </xpath>
         </field>
@@ -111,15 +126,15 @@
         <field name="inherit_id" ref="stock.product_search_form_view_stock_report"/>
         <field name="arch" type="xml">
             <xpath expr="//searchpanel/field[@name='categ_id']" position="after">
-                <field name="kind_id" string="نوع الخشب" select="multi" enable_counters="1" icon="fa-tree"/>
-                <field name="drying" string="التجفيف" select="multi" enable_counters="1" icon="fa-tint"/>
-                <field name="origin_id" string="المنشأ" select="multi" enable_counters="1" icon="fa-globe"/>
-                <field name="mark_id" string="المنشار" select="multi" enable_counters="1" icon="fa-scissors"/>
-                <field name="grade_id" string="الدرجة" select="multi" enable_counters="1" icon="fa-certificate"/>
-                <field name="subtype_id" string="النوع" select="multi" enable_counters="1" icon="fa-tag"/>
-                <field name="panels_thickness_filter" string="السمك" select="multi" enable_counters="1" icon="fa-arrows-v"/>
-                <field name="panels_width_filter" string="العرض" select="multi" enable_counters="1" icon="fa-arrows-h"/>
-                <field name="supplier_company_id" string="الشركة المورّدة" select="multi" enable_counters="1" icon="fa-building"/>
+                <field name="kind_id" string="Wood Type" select="multi" enable_counters="1" icon="fa-tree"/>
+                <field name="drying" string="Drying" select="multi" enable_counters="1" icon="fa-tint"/>
+                <field name="origin_id" string="Origin" select="multi" enable_counters="1" icon="fa-globe"/>
+                <field name="mark_id" string="Sawmill" select="multi" enable_counters="1" icon="fa-scissors"/>
+                <field name="grade_id" string="Grade" select="multi" enable_counters="1" icon="fa-certificate"/>
+                <field name="subtype_id" string="Sub-type" select="multi" enable_counters="1" icon="fa-tag"/>
+                <field name="panels_thickness_filter" string="Thickness" select="multi" enable_counters="1" icon="fa-arrows-v"/>
+                <field name="panels_width_filter" string="Width" select="multi" enable_counters="1" icon="fa-arrows-h"/>
+                <field name="supplier_company_id" string="Supplier Company" select="multi" enable_counters="1" icon="fa-building"/>
             </xpath>
         </field>
     </record>
@@ -139,7 +154,7 @@
                 <field name="subtype_id" optional="hide" options="{'no_create_edit': True, 'no_open': True}"/>
                 <field name="thickness" optional="show"/>
                 <field name="width" optional="show"/>
-                <field name="supplier_company_id" string="الشركة المورّدة" optional="hide"/>
+                <field name="supplier_company_id" string="Supplier Company" optional="hide"/>
             </field>
         </field>
     </record>

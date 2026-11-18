@@ -7,12 +7,12 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     width = fields.Float(
-        string="العرض",
+        string="Width",
         digits='Panels Millimeter',
     )
 
     thickness = fields.Float(
-        string="السمك",
+        string="Thickness",
         digits='Panels Millimeter',
     )
 

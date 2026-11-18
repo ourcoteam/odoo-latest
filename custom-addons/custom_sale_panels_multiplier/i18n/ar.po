@@ -1,0 +1,955 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_sale_panels_multiplier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-18 00:09+0000\n"
+"PO-Revision-Date: 2026-11-18 00:09+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid "%(kind_origin)s has no grade."
+msgstr "%(kind_origin)s ملوش درجة."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid "%(kind)s does not use KD/AD: choose None."
+msgstr "%(kind)s مش بيستخدم KD/AD: اختار بدون."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid "%(kind)s has no origin."
+msgstr "%(kind)s ملوش منشأ."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.report,print_report_name:custom_sale_panels_multiplier.action_report_account_statement
+msgid "'Statement - %s' % (object.partner_id.name)"
+msgstr "'كشف حساب - %s' % (object.partner_id.name)"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Car Plate: </strong>"
+msgstr "<strong>رقم السيارة: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "<strong>Customer / Vendor</strong>"
+msgstr "<strong>العميل / المورد</strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Customer: </strong>"
+msgstr "<strong>اسم العميل: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Date: </strong>"
+msgstr "<strong>التاريخ: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Driver Name: </strong>"
+msgstr "<strong>اسم السائق: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Driver's Licence No.: </strong>"
+msgstr "<strong>رقم رخصة القيادة: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "<strong>From: </strong>"
+msgstr "<strong>من: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Received by Customer: </strong>...................."
+msgstr "<strong>استلام العميل: </strong>...................."
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Received by Driver: </strong>...................."
+msgstr "<strong>استلام السائق: </strong>...................."
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Reviewer: </strong>"
+msgstr "<strong>المراجع: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Source Document: </strong>"
+msgstr "<strong>المستند: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "<strong>To: </strong>"
+msgstr "<strong>إلى: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Warehouse Keeper: </strong>"
+msgstr "<strong>أمين المخزن: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "<strong>Warehouse: </strong>"
+msgstr "<strong>المخزن: </strong>"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid ""
+"A sub-type is only used on AD products of a wood type with sub-types "
+"(Fillery)."
+msgstr "النوع بيستخدم بس مع أصناف AD لنوع خشب ليه أنواع (الفلليري)."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields.selection,name:custom_sale_panels_multiplier.selection__product_template__drying__ad
+msgid "AD (Air Dried)"
+msgstr "AD (مبلل)"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_panels_product_kind__uses_subtype
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__panels_uses_subtype
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__panels_uses_subtype
+msgid ""
+"AD products of this wood type take a sub-type instead of a grade (Fillery)."
+msgstr "أصناف AD من نوع الخشب ده بتاخد نوع بدل الدرجة (الفلليري)."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__code
+msgid "Abbreviation"
+msgstr "الاختصار"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__active
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__active
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__active
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__active
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__active
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_grade_search
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_kind_search
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_mark_search
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_origin_search
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_subtype_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_vehicle_plate
+msgid "Car Plate"
+msgstr "رقم السيارة"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_account_statement_wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__closing_balance
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Closing Balance"
+msgstr "رصيد ختامي"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__create_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__create_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__credit
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Credit"
+msgstr "دائن"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__currency_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__partner_id
+msgid "Customer / Vendor"
+msgstr "العميل / المورد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__date
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__debit
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Debit"
+msgstr "مدين"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "Description"
+msgstr "البيان"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_form_inherit_dimensions
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Dimensions"
+msgstr "الأبعاد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_dimensions
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_dimensions
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Dimensions (Thickness × Width)"
+msgstr "الأبعاد (السمك × العرض)"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_report__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_move__display_name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_driver_name
+msgid "Driver Name"
+msgstr "اسم السائق"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_driver_license
+msgid "Driver's Licence No."
+msgstr "رقم رخصة القيادة"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__drying
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__drying
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Drying"
+msgstr "التجفيف"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order__show_volume
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order__show_volume
+msgid "Enable to show Volume field in order lines."
+msgstr "فعّلها لإظهار عمود الحجم في سطور الأمر."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__kind_id
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__kind_id
+msgid "First part of the product name (e.g. Whitewood)."
+msgstr "أول جزء في اسم الصنف (مثلًا بياض)."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__date_from
+msgid "From Date"
+msgstr "من تاريخ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__grade_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__grade_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_grade_form
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Grade"
+msgstr "الدرجة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_panels_product_grade
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__grade_ids
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_allowed_grade_ids
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_allowed_grade_ids
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_grade_sale
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_grade_stock
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_grade_list
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_grade_search
+msgid "Grades"
+msgstr "الدرجات"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_panels_product_origin__grade_ids
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__panels_allowed_grade_ids
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__panels_allowed_grade_ids
+msgid "Grades offered for this origin. Empty = all."
+msgstr "الدرجات اللي بتظهر للمنشأ ده. فاضي = الكل."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__has_grades
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_origin_has_grades
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_origin_has_grades
+msgid "Has Grades"
+msgstr "ليه درجات"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_move_line__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_report__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_move__id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__move_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Journal Entry"
+msgstr "القيد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_account_move_line
+msgid "Journal Item"
+msgstr "عنصر اليومية"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields.selection,name:custom_sale_panels_multiplier.selection__product_template__drying__kd
+msgid "KD (Kiln Dried)"
+msgstr "KD (مجفف)"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__drying
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__drying
+msgid ""
+"KD (kiln dried) or AD (air dried); None = no drying, left out of the name."
+msgstr "KD (مجفف) أو AD (مبلل). بدون = من غير تجفيف، ومش بيظهر في الاسم."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__subtype_id
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__subtype_id
+msgid "Kept apart from the grade, e.g. Hasa Balta or OR for Fillery."
+msgstr "منفصل عن الدرجة، مثلًا Hasa Balta أو OR للفلليري."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__label
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Label"
+msgstr "البيان"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__write_uid
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__write_date
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__length
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__length
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Length"
+msgstr "الطول"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/stock_move.py:0
+msgid "Length %(length)s - Width %(width)s - Thickness %(thickness)s"
+msgstr "طول %(length)s - عرض %(width)s - سمك %(thickness)s"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order_line__length
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__length
+msgid "Length - used to calculate volume. Volume = Length × Width × Thickness"
+msgstr "الطول - بيستخدم في حساب الحجم. الحجم = الطول × العرض × السمك"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__line_ids
+msgid "Lines"
+msgstr "الحركات"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "Load Sheet"
+msgstr "قسيمة صرف"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.report,name:custom_sale_panels_multiplier.action_report_load_sheet
+msgid "Load Sheet (No Prices)"
+msgstr "قسيمة صرف (بدون أسعار)"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_picking_form_inherit_panels_driver
+msgid "Loading Details"
+msgstr "بيانات التحميل"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__name
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields.selection,name:custom_sale_panels_multiplier.selection__product_template__drying__none
+msgid "None"
+msgstr "بدون"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__number_of_panels
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__number_of_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Number of Panels"
+msgstr "عدد الألواح"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order_line__number_of_panels
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__number_of_panels
+msgid ""
+"Number of panels - used to calculate quantity automatically. Quantity = "
+"(Volume × Number of Panels) / 100,000,000"
+msgstr "عدد الألواح - بيستخدم في حساب الكمية أوتوماتيك. الكمية = (الحجم × عدد الألواح) / 100,000,000"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__opening_balance
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+msgid "Opening Balance"
+msgstr "رصيد افتتاحي"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__origin_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__origin_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Origin"
+msgstr "المنشأ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_panels_product_origin
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__origin_ids
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_allowed_origin_ids
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_allowed_origin_ids
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_origin_sale
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_origin_stock
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_origin_list
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_origin_search
+msgid "Origins"
+msgstr "المنشأ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_panels_product_kind__origin_ids
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__panels_allowed_origin_ids
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__panels_allowed_origin_ids
+msgid "Origins offered for this wood type. Empty = all."
+msgstr "المنشأ اللي بيظهر لنوع الخشب ده. فاضي = الكل."
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "Panels"
+msgstr "العدد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_product_grade
+msgid "Panels Grade"
+msgstr "الدرجة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_named_value_mixin
+msgid "Panels Mark / Grade value"
+msgstr "قيمة خشب"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_product_origin
+msgid "Panels Origin"
+msgstr "المنشأ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_product_mark
+msgid "Panels Sawmill"
+msgstr "المنشار"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_product_subtype
+msgid "Panels Sub-type"
+msgstr "النوع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_panels_product_kind
+msgid "Panels Wood Type"
+msgstr "نوع الخشب"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Price per m³"
+msgstr "سعر m³"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_account_statement_wizard_form
+msgid "Print PDF"
+msgstr "طباعة PDF"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_product_template
+msgid "Product"
+msgstr "المنتج"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_product_product
+msgid "Product Variant"
+msgstr "متغير المنتج"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__thickness
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__thickness
+msgid ""
+"Product thickness - auto-fills in sale order line when product is selected."
+msgstr "سمك الصنف - بيتملي لوحده في سطر أمر البيع لما تختار الصنف."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__width
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__width
+msgid ""
+"Product width - auto-fills in sale order line when product is selected."
+msgstr "عرض الصنف - بيتملي لوحده في سطر أمر البيع لما تختار الصنف."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__product_count
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__product_count
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__product_count
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_mark__product_count
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_origin__product_count
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_subtype__product_count
+msgid "Products"
+msgstr "عدد المنتجات"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_purchase_order
+msgid "Purchase Order"
+msgstr "أمر شراء"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "بند أمر الشراء"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__product_qty
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__product_uom_qty
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Quantity m³"
+msgstr "الكمية m³"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_reviewer
+msgid "Reviewer"
+msgstr "المراجع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__balance
+msgid "Running Balance"
+msgstr "الرصيد الجاري"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_sale_report
+msgid "Sales Analysis Report"
+msgstr "تقرير المبيعات التحليلي"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "بند أمر المبيعات"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__mark_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__mark_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_mark_form
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Sawmill"
+msgstr "المنشار"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_panels_product_mark
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_mark_sale
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_mark_stock
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_mark_list
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_mark_search
+msgid "Sawmills"
+msgstr "المناشير"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order__show_volume
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order__show_volume
+msgid "Show Volume"
+msgstr "إظهار الحجم"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "Signature: ...................."
+msgstr "التوقيع: ...................."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_account_statement_wizard
+#: model:ir.actions.report,name:custom_sale_panels_multiplier.action_report_account_statement
+#: model:ir.model,name:custom_sale_panels_multiplier.model_account_statement_wizard
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_account_statement_wizard
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_account_statement_wizard_form
+msgid "Statement of Account"
+msgstr "كشف حساب"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_account_statement_wizard_line
+msgid "Statement of Account Line"
+msgstr "سطر كشف الحساب"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_stock_move
+msgid "Stock Move"
+msgstr "حركة المخزون"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__subtype_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__subtype_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Sub-type"
+msgstr "النوع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_panels_product_subtype
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_subtype_sale
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_subtype_stock
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_subtype_list
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_subtype_search
+msgid "Sub-types"
+msgstr "الأنواع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__supplier_company_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__supplier_company_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__supplier_company_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_report__supplier_company_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_move__supplier_company_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_move_search_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_move_tree_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_line_tree_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_form_inherit_dimensions
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_list_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_sales_order_filter_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_sales_order_line_filter_inherit_panels
+msgid "Supplier Company"
+msgstr "الشركة المورّدة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_product__supplier_company_id
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_product_template__supplier_company_id
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__supplier_company_id
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_stock_move__supplier_company_id
+msgid "The foreign company this product is imported from."
+msgstr "الشركة الأجنبية اللي الصنف ده بيتستورد منها."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/panels_mark_grade.py:0
+msgid "The name is required."
+msgstr "الاسم مطلوب."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_move_line__thickness
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__thickness
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__thickness
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__thickness
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__thickness
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_move_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_form_inherit_dimensions
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Thickness"
+msgstr "السمك"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_thickness_filter
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_thickness_filter
+msgid "Thickness (filter)"
+msgstr "السمك (فلتر)"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order_line__thickness
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__thickness
+msgid ""
+"Thickness - used to calculate volume. Volume = Length × Width × Thickness"
+msgstr "السمك - بيستخدم في حساب الحجم. الحجم = الطول × العرض × السمك"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_kind_code_uniq
+msgid "This abbreviation is already used by another wood type."
+msgstr "هذا الاختصار مستخدم لنوع خشب آخر."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_grade_name_uniq
+msgid "This grade already exists."
+msgstr "هذه الدرجة موجودة بالفعل."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_origin_name_uniq
+msgid "This origin already exists."
+msgstr "هذا المنشأ موجود بالفعل."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_mark_name_uniq
+msgid "This sawmill already exists."
+msgstr "هذا المنشار موجود بالفعل."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_subtype_name_uniq
+msgid "This sub-type already exists."
+msgstr "هذا النوع موجود بالفعل."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.constraint,message:custom_sale_panels_multiplier.constraint_panels_product_kind_name_uniq
+msgid "This wood type already exists."
+msgstr "نوع الخشب هذا موجود بالفعل."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid "Timber Products Import Template"
+msgstr "قالب استيراد أصناف الخشب"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__date_to
+msgid "To Date"
+msgstr "إلى تاريخ"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_account_statement_wizard_form
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order__total_qty_m3
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order__total_qty_m3
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Total Quantity m³"
+msgstr "إجمالي الكمية m³"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_stock_picking
+msgid "Transfer"
+msgstr "تحويل"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__uses_grade
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_uses_grade
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_uses_grade
+msgid "Uses Grade"
+msgstr "بيستخدم الدرجة"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__uses_drying
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_uses_drying
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_uses_drying
+msgid "Uses KD/AD"
+msgstr "بيستخدم KD/AD"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__uses_origin
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_uses_origin
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_uses_origin
+msgid "Uses Origin"
+msgstr "بيستخدم المنشأ"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__uses_subtype
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_uses_subtype
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_uses_subtype
+msgid "Uses Sub-type"
+msgstr "بيستخدم النوع"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__volume
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__volume
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Volume"
+msgstr "الحجم"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order_line__volume
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__volume
+msgid "Volume = Length × Width × Thickness. Used in quantity calculation."
+msgstr "الحجم = الطول × العرض × السمك. بيستخدم في حساب الكمية."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_warehouse_keeper
+msgid "Warehouse Keeper"
+msgstr "أمين المخزن"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_move_line__width
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__width
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__width
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_purchase_order_line__width
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__width
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_move_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_order_form_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_form_inherit_dimensions
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
+msgid "Width"
+msgstr "العرض"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__panels_width_filter
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__panels_width_filter
+msgid "Width (filter)"
+msgstr "العرض (فلتر)"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_purchase_order_line__width
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__width
+msgid "Width - used to calculate volume. Volume = Length × Width × Thickness"
+msgstr "العرض - بيستخدم في حساب الحجم. الحجم = الطول × العرض × السمك"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_product__kind_id
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_product_template__kind_id
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_stock_report_search_panels
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_product_template_search_inherit_panels
+msgid "Wood Type"
+msgstr "نوع الخشب"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.act_window,name:custom_sale_panels_multiplier.action_panels_product_kind
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_kind_sale
+#: model:ir.ui.menu,name:custom_sale_panels_multiplier.menu_panels_product_kind_stock
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_kind_list
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_panels_product_kind_search
+msgid "Wood Types"
+msgstr "أنواع الخشب"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
+msgid ""
+"Wood type, drying, thickness and width are required for goods so every "
+"product name follows the same pattern. Missing: %s"
+msgstr "يجب إدخال نوع الخشب والتجفيف والسمك والعرض للبضائع حتى يُكتب اسم المنتج بنفس الشكل. الناقص: %s"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+msgid "m³"
+msgstr "المكعب"

@@ -10,12 +10,12 @@
             <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='quantity']" position="before">
                 <field
                     name="thickness"
-                    string="السمك"
+                    string="Thickness"
                     optional="show"
                     invisible="display_type != 'product'"/>
                 <field
                     name="width"
-                    string="العرض"
+                    string="Width"
                     optional="show"
                     invisible="display_type != 'product'"/>
             </xpath>

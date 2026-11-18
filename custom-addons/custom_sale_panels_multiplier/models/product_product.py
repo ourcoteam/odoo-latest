@@ -2,7 +2,7 @@
 # product.product + product.template extensions in one module file so fields
 # always load together (avoids upgrade errors if one file is missing on server).
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import SQL, float_round
 from odoo.tools.float_utils import float_is_zero
@@ -19,7 +19,7 @@ PANELS_IMPORT_VALUE_MODELS = (
 PANELS_AUTO_NAME_FIELDS = frozenset(
     [field for field, _model in PANELS_IMPORT_VALUE_MODELS] + ['drying', 'width', 'thickness']
 )
-PANELS_DRYING_SELECTION = [('kd', 'KD (مجفف)'), ('ad', 'AD (مبلل)'), ('none', 'None (بدون)')]
+PANELS_DRYING_SELECTION = [('kd', 'KD (Kiln Dried)'), ('ad', 'AD (Air Dried)'), ('none', 'None')]
 # Drying as written in the product name, per language (None is left out).
 PANELS_DRYING_LABELS = {'kd': 'KD', 'ad': 'AD'}
 PANELS_DRYING_LABELS_AR = {'kd': 'مجفف', 'ad': 'مبلل'}
@@ -57,13 +57,13 @@ def _panels_prepare_import_rows(env, fields, data):
         # Accept KD / AD / None in any case; an empty cell means None.
         col = fields.index('drying')
         keys = {key: key for key, _label in PANELS_DRYING_SELECTION}
-        keys.update({label.lower(): key for key, label in PANELS_DRYING_SELECTION})
-        keys.update({label.split(' ')[0].lower(): key for key, label in PANELS_DRYING_SELECTION})
+        keys.update({label.split(' (')[0].lower(): key for key, label in PANELS_DRYING_SELECTION})
         keys.update({label: key for key, label in PANELS_DRYING_LABELS_AR.items()})
         keys['بدون'] = 'none'
         for row in data:
             value = row[col] if col < len(row) else ''
-            text = str(value or '').strip().lower()
+            # "KD (Kiln Dried)" / "KD (مجفف)" as exported: the code before the bracket.
+            text = str(value or '').split(' (')[0].strip().lower()
             row[col] = keys.get(text, value) if text else 'none'
     for field_name, model_name in PANELS_IMPORT_VALUE_MODELS:
         if field_name not in fields:
@@ -207,14 +207,14 @@ class ProductTemplate(models.Model):
 
     # Canonical fields (persist on template even with multiple variants)
     width = fields.Float(
-        string="العرض",
+        string="Width",
         store=True,
         digits='Panels Millimeter',
         help="Product width - auto-fills in sale order line when product is selected."
     )
 
     thickness = fields.Float(
-        string="السمك",
+        string="Thickness",
         store=True,
         digits='Panels Millimeter',
         help="Product thickness - auto-fills in sale order line when product is selected."
@@ -224,7 +224,7 @@ class ProductTemplate(models.Model):
     # Name: Type [KD/AD] Origin Sawmill Grade Sub-type ThicknessxWidth.
     kind_id = fields.Many2one(
         'panels.product.kind',
-        string="نوع الخشب",
+        string="Wood Type",
         ondelete='restrict',
         index=True,
         help="First part of the product name (e.g. Whitewood).",
@@ -232,43 +232,53 @@ class ProductTemplate(models.Model):
 
     drying = fields.Selection(
         PANELS_DRYING_SELECTION,
-        string="التجفيف",
+        string="Drying",
         default='none',
-        help="KD (مجفف) or AD (مبلل); None = no drying, left out of the name.",
+        help="KD (kiln dried) or AD (air dried); None = no drying, left out of the name.",
     )
 
     origin_id = fields.Many2one(
         'panels.product.origin',
-        string="المنشأ",
+        string="Origin",
         ondelete='restrict',
         index=True,
     )
 
     mark_id = fields.Many2one(
         'panels.product.mark',
-        string="المنشار",
+        string="Sawmill",
         ondelete='restrict',
         index=True,
     )
 
     grade_id = fields.Many2one(
         'panels.product.grade',
-        string="الدرجة",
+        string="Grade",
         ondelete='restrict',
         index=True,
     )
 
     subtype_id = fields.Many2one(
         'panels.product.subtype',
-        string="النوع",
+        string="Sub-type",
         ondelete='restrict',
         index=True,
         help="Kept apart from the grade, e.g. Hasa Balta or OR for Fillery.",
     )
 
+    # The wood type's rules (spec section 2), for the product form: which
+    # parts it shows and which origins / grades it offers.
+    panels_uses_drying = fields.Boolean(related='kind_id.uses_drying')
+    panels_uses_origin = fields.Boolean(related='kind_id.uses_origin')
+    panels_uses_grade = fields.Boolean(related='kind_id.uses_grade')
+    panels_uses_subtype = fields.Boolean(related='kind_id.uses_subtype')
+    panels_allowed_origin_ids = fields.Many2many(related='kind_id.origin_ids')
+    panels_origin_has_grades = fields.Boolean(related='origin_id.has_grades')
+    panels_allowed_grade_ids = fields.Many2many(related='origin_id.grade_ids')
+
     supplier_company_id = fields.Many2one(
         'res.partner',
-        string="الشركة المورّدة",
+        string="Supplier Company",
         domain=[('is_company', '=', True)],
         context={'default_is_company': True},
         help="The foreign company this product is imported from.",
@@ -277,19 +287,19 @@ class ProductTemplate(models.Model):
     # Filter-only copies of the dimensions (see _panels_dimension_selection).
     panels_thickness_filter = fields.Selection(
         selection=lambda self: _panels_dimension_selection(self, 'panels_thickness_filter'),
-        string="السمك (فلتر)",
+        string="Thickness (filter)",
         compute='_compute_panels_dimension_filters',
         store=True,
     )
     panels_width_filter = fields.Selection(
         selection=lambda self: _panels_dimension_selection(self, 'panels_width_filter'),
-        string="العرض (فلتر)",
+        string="Width (filter)",
         compute='_compute_panels_dimension_filters',
         store=True,
     )
     panels_dimensions = fields.Selection(
         selection=lambda self: _panels_dimension_selection(self, 'panels_dimensions'),
-        string="الأبعاد (السمك × العرض)",
+        string="Dimensions (Thickness × Width)",
         compute='_compute_panels_dimension_filters',
         store=True,
     )
@@ -307,17 +317,19 @@ class ProductTemplate(models.Model):
 
     @api.model
     def get_import_templates(self):
-        # Timber template first: Arabic headers = field labels, so the import
-        # maps every column by itself; no name column (it is built).
+        # Timber template first, in the user's language: its headers are the
+        # field labels, so the import maps every column by itself; no name
+        # column (it is built).
+        suffix = '_ar' if (self.env.lang or '').startswith('ar') else ''
         return [{
-            'label': "قالب استيراد أصناف الخشب",
-            'template': '/custom_sale_panels_multiplier/static/xls/product_template_timber.xlsx',
+            'label': _("Timber Products Import Template"),
+            'template': f'/custom_sale_panels_multiplier/static/xls/product_template_timber{suffix}.xlsx',
         }] + super().get_import_templates()
 
     @api.model
     def _panels_build_product_name(self, kind, drying, origin, sawmill, grade, subtype,
                                    thickness, width, lang=None):
-        """Build 'Whitewood KD Finland Norra V 22x100' ('بياض مجفف فنلندا ...'
+        """Build 'Whitewood KD Finland Norra V 22x100' (Arabic words
         in Arabic): empty parts are skipped, the size only shows when both
         thickness and width are set."""
         lang = lang or self.env.lang or 'en_US'
@@ -361,14 +373,61 @@ class ProductTemplate(models.Model):
         if names:
             self.with_context(skip_panels_auto_name=True).update_field_translations('name', names)
 
+    def _panels_spec_issues(self):
+        """Name parts this product has but its wood type does not use."""
+        self.ensure_one()
+        kind, origin = self.kind_id, self.origin_id
+        issues = []
+        if not kind:
+            return issues
+        if self.drying and self.drying != 'none' and not kind.uses_drying:
+            issues.append('drying')
+        if origin and not kind.uses_origin:
+            issues.append('origin_id')
+        if self.grade_id and (not kind.uses_grade or (origin and not origin.has_grades)):
+            issues.append('grade_id')
+        if self.subtype_id and not (kind.uses_subtype and self.drying == 'ad'):
+            issues.append('subtype_id')
+        return issues
+
     @api.onchange('kind_id', 'drying', 'origin_id', 'mark_id', 'grade_id', 'subtype_id', 'width', 'thickness')
     def _onchange_panels_auto_name(self):
+        # Clear the parts the chosen wood type / origin does not take, so the
+        # name keeps to the spec (e.g. switching to Zaan drops origin and grade).
+        for field in self._panels_spec_issues():
+            self[field] = 'none' if field == 'drying' else False
+        kind, origin = self.kind_id, self.origin_id
+        if origin and kind.origin_ids and origin not in kind.origin_ids:
+            self.origin_id = origin = False
+        if self.grade_id and origin and origin.grade_ids and self.grade_id not in origin.grade_ids:
+            self.grade_id = False
         name = self._panels_build_product_name(
             self.kind_id.name, self.drying, self.origin_id.name, self.mark_id.name,
             self.grade_id.name, self.subtype_id.name, self.thickness, self.width,
         )
         if name:
             self.name = name
+
+    @api.constrains('type', 'kind_id', 'drying', 'origin_id', 'grade_id', 'subtype_id')
+    def _check_panels_spec_rules(self):
+        """Spec section 2: e.g. KD/AD only for Whitewood and Fillery, Zaan has
+        no origin or grade, the sub-type replaces the grade on AD Fillery."""
+        messages = {
+            'drying': _("%(kind)s does not use KD/AD: choose None."),
+            'origin_id': _("%(kind)s has no origin."),
+            'grade_id': _("%(kind_origin)s has no grade."),
+            'subtype_id': _("A sub-type is only used on AD products of a wood type with sub-types (Fillery)."),
+        }
+        for template in self.filtered(lambda t: t.type == 'consu'):
+            issues = template._panels_spec_issues()
+            if issues:
+                raise ValidationError("\n".join(
+                    messages[issue] % {
+                        'kind': template.kind_id.name,
+                        'kind_origin': ' '.join(filter(None, (template.kind_id.name, template.origin_id.name))),
+                    }
+                    for issue in issues
+                ))
 
     @api.constrains('type', 'kind_id', 'drying', 'width', 'thickness')
     def _check_panels_dimensions_required(self):
@@ -378,20 +437,20 @@ class ProductTemplate(models.Model):
         for template in self:
             if template.type != 'consu':
                 continue
-            # The client works in Arabic only, so the message is written in Arabic.
             missing = [
                 label for value, label in (
-                    (template.kind_id, "نوع الخشب"),
-                    (template.drying, "التجفيف"),
-                    (template.thickness, "السمك"),
-                    (template.width, "العرض"),
+                    (template.kind_id, _("Wood Type")),
+                    (template.drying, _("Drying")),
+                    (template.thickness, _("Thickness")),
+                    (template.width, _("Width")),
                 ) if not value
             ]
             if missing:
-                raise ValidationError(
-                    "يجب إدخال نوع الخشب والتجفيف والسمك والعرض للبضائع حتى يُكتب "
-                    "اسم المنتج بنفس الشكل. الناقص: %s" % '، '.join(missing)
-                )
+                raise ValidationError(_(
+                    "Wood type, drying, thickness and width are required for goods so "
+                    "every product name follows the same pattern. Missing: %s",
+                    ', '.join(missing),
+                ))
 
     @api.model_create_multi
     def create(self, vals_list):

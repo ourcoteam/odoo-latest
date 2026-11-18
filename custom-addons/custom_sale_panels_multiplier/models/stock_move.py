@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import fields, models
+from odoo import _, fields, models
 
 from .product_product import _panels_format_dimension_number
 
@@ -10,7 +10,7 @@ class StockMove(models.Model):
 
     supplier_company_id = fields.Many2one(
         related='product_id.product_tmpl_id.supplier_company_id',
-        string="الشركة المورّدة",
+        string="Supplier Company",
         store=True,
     )
 
@@ -30,7 +30,8 @@ class StockMove(models.Model):
             dims = [_panels_format_dimension_number(self.env, value)
                     for value in (sale_line.length, sale_line.width, sale_line.thickness)]
             if all(dims):
-                sizes = 'طول %s - عرض %s - سمك %s' % tuple(dims)
+                sizes = _("Length %(length)s - Width %(width)s - Thickness %(thickness)s",
+                          length=dims[0], width=dims[1], thickness=dims[2])
         return {
             'panels': panels,
             'product': self.product_id.with_context(lang=self.env.lang).display_name,

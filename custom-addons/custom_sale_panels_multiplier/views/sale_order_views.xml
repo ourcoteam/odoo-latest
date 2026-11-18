@@ -15,18 +15,18 @@
             <!-- Add Length, Width, Thickness and number_of_panels fields in Form View before product_uom_qty label -->
             <xpath expr="//label[@for='product_uom_qty']" position="before">
                 <!-- Thickness field -->
-                <label for="thickness" string="السمك" invisible="display_type"/>
+                <label for="thickness" string="Thickness" invisible="display_type"/>
                 <div name="thickness" invisible="display_type">
                     <field name="product_id" invisible="1" force_save="1"/>
                     <field name="thickness" class="oe_inline"/>
                 </div>
                 <!-- Width field -->
-                <label for="width" string="العرض" invisible="display_type"/>
+                <label for="width" string="Width" invisible="display_type"/>
                 <div name="width" invisible="display_type">
                     <field name="width" class="oe_inline"/>
                 </div>
                 <!-- Length field -->
-                <label for="length" string="الطول" invisible="display_type"/>
+                <label for="length" string="Length" invisible="display_type"/>
                 <div name="length" invisible="display_type">
                     <field name="length" class="oe_inline"/>
                 </div>
@@ -36,7 +36,7 @@
                     <field name="volume" readonly="1" class="oe_inline"/>
                 </div>
                 <!-- number_of_panels field -->
-                <label for="number_of_panels" string="عدد الألواح" invisible="display_type"/>
+                <label for="number_of_panels" string="Number of Panels" invisible="display_type"/>
                 <div name="panels_qty" invisible="display_type">
                     <field name="number_of_panels" class="oe_inline"/>
                 </div>
@@ -47,19 +47,19 @@
                 <!-- Thickness field -->
                 <field
                     name="thickness"
-                    string="السمك"
+                    string="Thickness"
                     optional="show"
                     invisible="display_type"/>
                 <!-- Width field -->
                 <field
                     name="width"
-                    string="العرض"
+                    string="Width"
                     optional="show"
                     invisible="display_type"/>
                 <!-- Length field -->
                 <field
                     name="length"
-                    string="الطول"
+                    string="Length"
                     optional="show"
                     invisible="display_type"/>
                 <!-- Volume (computed, readonly) -->
@@ -72,44 +72,44 @@
                 <!-- number_of_panels field -->
                 <field
                     name="number_of_panels"
-                    string="عدد الألواح"
+                    string="Number of Panels"
                     optional="show"
                     invisible="display_type"
                     readonly="is_downpayment"/>
                 <!-- Supplier company (read-only, follows the product) -->
                 <field
                     name="supplier_company_id"
-                    string="الشركة المورّدة"
+                    string="Supplier Company"
                     optional="hide"
                     readonly="1"
                     invisible="display_type"/>
             </xpath>
 
-            <!-- Make product_uom_qty readonly when dimensions and panels are used and change label to "الكمية m³" -->
+            <!-- Make product_uom_qty readonly when dimensions and panels are used and change label to "Quantity m³" -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="attributes">
                 <attribute name="readonly">display_type or (length and width and thickness and number_of_panels and number_of_panels > 0)</attribute>
-                <attribute name="string">الكمية m³</attribute>
+                <attribute name="string">Quantity m³</attribute>
             </xpath>
 
-            <!-- Change product_uom_qty label in Form View to "الكمية m³" -->
+            <!-- Change product_uom_qty label in Form View to "Quantity m³" -->
             <xpath expr="//label[@for='product_uom_qty']" position="attributes">
-                <attribute name="string">الكمية m³</attribute>
+                <attribute name="string">Quantity m³</attribute>
             </xpath>
 
-            <!-- Change price_unit label in Form View to "سعر m³" -->
+            <!-- Change price_unit label in Form View to "Price per m³" -->
             <xpath expr="//field[@name='price_unit']" position="attributes">
-                <attribute name="string">سعر m³</attribute>
+                <attribute name="string">Price per m³</attribute>
             </xpath>
 
-            <!-- Change price_unit label in List View to "سعر m³" -->
+            <!-- Change price_unit label in List View to "Price per m³" -->
             <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="attributes">
-                <attribute name="string">سعر m³</attribute>
+                <attribute name="string">Price per m³</attribute>
             </xpath>
 
             <!-- Total quantity m³ in footer (like Untaxed Amount) -->
             <xpath expr="//group[@name='sale_total']/field[@name='tax_totals']" position="before">
                 <div class="d-flex justify-content-between align-items-center w-100 mb-2">
-                    <label class="o_form_label o_tax_total_label fw-bold" for="total_qty_m3">إجمالي الكمية m³</label>
+                    <label class="o_form_label o_tax_total_label fw-bold" for="total_qty_m3">Total Quantity m³</label>
                     <field name="total_qty_m3" nolabel="1" readonly="1" class="o_list_monetary text-end"/>
                 </div>
             </xpath>
@@ -123,7 +123,7 @@
         <field name="inherit_id" ref="sale.view_sales_order_filter"/>
         <field name="arch" type="xml">
             <field name="order_line" position="after">
-                <field name="order_line" string="الشركة المورّدة" filter_domain="[('order_line.supplier_company_id', 'ilike', self)]"/>
+                <field name="order_line" string="Supplier Company" filter_domain="[('order_line.supplier_company_id', 'ilike', self)]"/>
             </field>
         </field>
     </record>
@@ -137,7 +137,7 @@
         <field name="inherit_id" ref="sale.view_order_line_tree"/>
         <field name="arch" type="xml">
             <field name="product_uom_qty" position="after">
-                <field name="supplier_company_id" string="الشركة المورّدة" optional="show"/>
+                <field name="supplier_company_id" string="Supplier Company" optional="show"/>
             </field>
         </field>
     </record>
@@ -148,10 +148,10 @@
         <field name="inherit_id" ref="sale.view_sales_order_line_filter"/>
         <field name="arch" type="xml">
             <field name="product_id" position="after">
-                <field name="supplier_company_id" string="الشركة المورّدة"/>
+                <field name="supplier_company_id" string="Supplier Company"/>
             </field>
             <filter name="product" position="after">
-                <filter string="الشركة المورّدة" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
+                <filter string="Supplier Company" name="group_by_supplier_company" context="{'group_by': 'supplier_company_id'}"/>
             </filter>
         </field>
     </record>

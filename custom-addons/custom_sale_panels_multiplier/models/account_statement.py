@@ -17,16 +17,16 @@ class AccountStatementWizard(models.TransientModel):
     )
     currency_id = fields.Many2one(related='company_id.currency_id')
     partner_id = fields.Many2one(
-        'res.partner', required=True, string="العميل / المورد",
+        'res.partner', required=True, string="Customer / Vendor",
     )
-    date_from = fields.Date(string="من تاريخ")
-    date_to = fields.Date(string="إلى تاريخ", default=fields.Date.context_today)
+    date_from = fields.Date(string="From Date")
+    date_to = fields.Date(string="To Date", default=fields.Date.context_today)
 
     opening_balance = fields.Monetary(compute='_compute_statement')
     closing_balance = fields.Monetary(compute='_compute_statement')
     line_ids = fields.One2many(
         'account.statement.wizard.line', 'wizard_id',
-        string="الحركات", compute='_compute_statement',
+        string="Lines", compute='_compute_statement',
     )
 
     def _get_move_line_domain(self):
@@ -98,9 +98,9 @@ class AccountStatementWizardLine(models.TransientModel):
         'account.statement.wizard', required=True, ondelete='cascade',
     )
     currency_id = fields.Many2one(related='wizard_id.currency_id')
-    date = fields.Date(string="التاريخ")
-    move_id = fields.Many2one('account.move', string="القيد")
-    label = fields.Char(string="البيان")
-    debit = fields.Monetary(string="مدين")
-    credit = fields.Monetary(string="دائن")
-    balance = fields.Monetary(string="الرصيد الجاري")
+    date = fields.Date(string="Date")
+    move_id = fields.Many2one('account.move', string="Journal Entry")
+    label = fields.Char(string="Label")
+    debit = fields.Monetary(string="Debit")
+    credit = fields.Monetary(string="Credit")
+    balance = fields.Monetary(string="Running Balance")
