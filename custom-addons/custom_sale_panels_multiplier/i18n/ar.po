@@ -526,6 +526,43 @@ msgid "Origins offered for this wood type. Empty = all."
 msgstr "المنشأ اللي بيظهر لنوع الخشب ده. فاضي = الكل."
 
 #. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order_line.py:0
+msgid ""
+"Package %(package)s belongs to the product %(package_product)s, not to "
+"%(product)s."
+msgstr "الطرد %(package)s تبع المنتج %(package_product)s، مش %(product)s."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order_line.py:0
+msgid "Package %s exists for more than one product: fill in the product too."
+msgstr "رقم الطرد %s موجود لأكتر من منتج: اكتب المنتج كمان."
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_sale_order_line__panels_lot_id
+msgid "Package No."
+msgstr "رقم الطرد"
+
+#. module: custom_sale_panels_multiplier
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
+#: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_saleorder_document_inherit_panels
+msgid "Package No.:"
+msgstr "رقم الطرد:"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order_line.py:0
+msgid "Package %s has no stock left."
+msgstr "الطرد %s مفيش منه رصيد في المخزون."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order_line.py:0
+msgid "Package No.: %s"
+msgstr "رقم الطرد: %s"
+
+#. module: custom_sale_panels_multiplier
 #: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_load_sheet_document
 msgid "Panels"
 msgstr "العدد"
@@ -626,6 +663,11 @@ msgstr "الكمية"
 #: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
 msgid "Quantity m³"
 msgstr "الكمية m³"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_stock_quant
+msgid "Quants"
+msgstr "سجلات الكميات"
 
 #. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_reviewer
@@ -752,6 +794,13 @@ msgid "The name is required."
 msgstr "الاسم مطلوب."
 
 #. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_sale_order_line__panels_lot_id
+msgid ""
+"The supplier's package (bundle) number, tracked in stock as a lot. "
+"Confirming the order reserves this package on the delivery."
+msgstr "رقم الطرد من المورد، ومتتبّع في المخزون كرقم دفعة. لما عرض السعر يتأكد، أمر التوصيل بيحجز الطرد ده بالظبط."
+
+#. module: custom_sale_panels_multiplier
 #. odoo-python
 #: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_move_line__thickness
@@ -816,6 +865,12 @@ msgstr "نوع الخشب هذا موجود بالفعل."
 #: code:addons/custom_sale_panels_multiplier/models/product_product.py:0
 msgid "Timber Products Import Template"
 msgstr "قالب استيراد أصناف الخشب"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order.py:0
+msgid "Timber Quotations Import Template"
+msgstr "قالب استيراد عروض أسعار الخشب"
 
 #. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__date_to

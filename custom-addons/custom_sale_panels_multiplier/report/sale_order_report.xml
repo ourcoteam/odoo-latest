@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Quotation / sales order PDF: the package number under the line's description. -->
+    <template id="report_saleorder_document_inherit_panels" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//td[@name='td_product_name']" position="inside">
+            <div t-if="line.panels_lot_id" class="text-muted small">
+                Package No.: <span t-out="line.panels_lot_id.name"/>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

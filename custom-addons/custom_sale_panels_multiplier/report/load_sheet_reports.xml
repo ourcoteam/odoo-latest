@@ -78,6 +78,9 @@
                                 <div t-if="line['sizes']" class="text-muted small">
                                     <span t-out="line['sizes']"/>
                                 </div>
+                                <div t-if="line.get('packages')" class="text-muted small">
+                                    Package No.: <span t-out="line['packages']"/>
+                                </div>
                             </td>
                             <td class="text-center">
                                 <span t-out="line['qty']" t-options='{"widget": "float", "precision": 3}'/>

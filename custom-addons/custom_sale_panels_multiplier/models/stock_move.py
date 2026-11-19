@@ -32,10 +32,37 @@ class StockMove(models.Model):
             if all(dims):
                 sizes = _("Length %(length)s - Width %(width)s - Thickness %(thickness)s",
                           length=dims[0], width=dims[1], thickness=dims[2])
+        lots = self.move_line_ids.lot_id or sale_line.panels_lot_id
         return {
             'panels': panels,
             'product': self.product_id.with_context(lang=self.env.lang).display_name,
             'sizes': sizes,
+            'packages': ', '.join(lots.mapped('name')),
             'qty': qty,
             'uom': self.product_uom.name,
         }
+
+    # ========== Packages (lots) quoted on the sale line ==========
+
+    def _panels_quoted_lot(self):
+        """The package chosen on the sale line, when this move takes the goods
+        out of stock (not for receipts, returns or products without lots)."""
+        self.ensure_one()
+        if 'sale_line_id' not in self._fields:
+            return self.env['stock.lot']
+        lot = self.sale_line_id.panels_lot_id
+        if (lot and lot.product_id == self.product_id and self.product_id.tracking == 'lot'
+                and self.location_id.usage == 'internal'):
+            return lot
+        return self.env['stock.lot']
+
+    def _update_reserved_quantity_vals(self, need, location_id, lot_id=None, package_id=None, owner_id=None, strict=True):
+        lot = self.env['stock.lot'] if lot_id else self._panels_quoted_lot()
+        if not lot:
+            return super()._update_reserved_quantity_vals(
+                need, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
+        # Reserve the quoted package only: neither another package nor stock
+        # without a package (see stock.quant._gather).
+        move = self.with_context(panels_reserve_lot_id=lot.id)
+        return super(StockMove, move)._update_reserved_quantity_vals(
+            need, location_id, lot_id=lot, package_id=package_id, owner_id=owner_id, strict=strict)

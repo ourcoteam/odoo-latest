@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+
+    @api.model
+    def get_import_templates(self):
+        # Timber template first, in the user's language: its headers are the
+        # field labels, so the import maps every column by itself.
+        suffix = '_ar' if (self.env.lang or '').startswith('ar') else ''
+        return [{
+            'label': _("Timber Quotations Import Template"),
+            'template': f'/custom_sale_panels_multiplier/static/xls/quotation_template_timber{suffix}.xlsx',
+        }] + super().get_import_templates()
 
     show_volume = fields.Boolean(
         string="Show Volume",

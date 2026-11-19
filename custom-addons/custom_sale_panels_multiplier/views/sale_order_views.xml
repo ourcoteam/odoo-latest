@@ -14,6 +14,12 @@
 
             <!-- Add Length, Width, Thickness and number_of_panels fields in Form View before product_uom_qty label -->
             <xpath expr="//label[@for='product_uom_qty']" position="before">
+                <!-- Package (lot) in stock: brings its product; fixed once the line is confirmed -->
+                <field name="panels_lot_id"
+                       groups="stock.group_production_lot"
+                       invisible="display_type"
+                       readonly="parent.state == 'cancel' or (parent.state == 'sale' and id)"
+                       options="{'no_create': True}"/>
                 <!-- Thickness field -->
                 <label for="thickness" string="Thickness" invisible="display_type"/>
                 <div name="thickness" invisible="display_type">
@@ -44,6 +50,15 @@
 
             <!-- Add Length, Width, Thickness and number_of_panels fields in List View before product_uom_qty field -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_uom_qty']" position="before">
+                <!-- Package (lot) in stock: brings its product; fixed once the line is confirmed -->
+                <field
+                    name="panels_lot_id"
+                    groups="stock.group_production_lot"
+                    width="130px"
+                    optional="show"
+                    invisible="display_type"
+                    readonly="parent.state == 'cancel' or (parent.state == 'sale' and id)"
+                    options="{'no_create': True}"/>
                 <!-- Thickness field -->
                 <field
                     name="thickness"

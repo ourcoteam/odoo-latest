@@ -6,6 +6,7 @@ import { patch } from "@web/core/utils/patch";
 const PANELS_ENTER_NAV_COLUMNS = new Set([
     "product_id",
     "product_template_id",
+    "panels_lot_id",
     "thickness",
     "width",
     "length",
