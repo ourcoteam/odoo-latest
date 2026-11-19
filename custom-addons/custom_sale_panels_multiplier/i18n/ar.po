@@ -34,6 +34,22 @@ msgid "%(kind)s has no origin."
 msgstr "%(kind)s ملوش منشأ."
 
 #. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/stock_lot.py:0
+msgid ""
+"%(products)s products are now tracked by package; the stock of %(old)s of "
+"them is in the package \"%(name)s\"."
+msgstr "%(products)s منتج بقوا متتبعين بالطرود، ورصيد %(old)s منهم اتسجل في طرد \"%(name)s\"."
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/sale_order_line.py:0
+msgid ""
+"%s is not tracked by package: choose \"Track by Package\" on the product "
+"first."
+msgstr "المنتج %s مش متتبع بالطرود: اختار \"تتبع بالطرود\" للمنتج الأول."
+
+#. module: custom_sale_panels_multiplier
 #: model:ir.actions.report,print_report_name:custom_sale_panels_multiplier.action_report_account_statement
 msgid "'Statement - %s' % (object.partner_id.name)"
 msgstr "'كشف حساب - %s' % (object.partner_id.name)"
@@ -157,6 +173,11 @@ msgstr "مؤرشف"
 #: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
 msgid "Balance"
 msgstr "الرصيد"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_lot__panels_quotable
+msgid "Can Be Quoted"
+msgstr "ممكن يتعرض"
 
 #. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_stock_picking__panels_vehicle_plate
@@ -365,6 +386,11 @@ msgid "ID"
 msgstr "المُعرف"
 
 #. module: custom_sale_panels_multiplier
+#: model:ir.model.fields,help:custom_sale_panels_multiplier.field_stock_lot__panels_quotable
+msgid "In stock, or not received yet (no stock move done with it)."
+msgstr "في المخزون، أو لسه موصلش (مفيش عليه أي حركة مخزون منتهية)."
+
+#. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard_line__move_id
 #: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.report_account_statement_document
 msgid "Journal Entry"
@@ -462,6 +488,11 @@ msgid "Loading Details"
 msgstr "بيانات التحميل"
 
 #. module: custom_sale_panels_multiplier
+#: model:ir.model,name:custom_sale_panels_multiplier.model_stock_lot
+msgid "Lot/Serial"
+msgstr "رقم الدفعة/الرقم التسلسلي"
+
+#. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_named_value_mixin__name
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_grade__name
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_panels_product_kind__name
@@ -491,6 +522,12 @@ msgid ""
 "Number of panels - used to calculate quantity automatically. Quantity = "
 "(Volume × Number of Panels) / 100,000,000"
 msgstr "عدد الألواح - بيستخدم في حساب الكمية أوتوماتيك. الكمية = (الحجم × عدد الألواح) / 100,000,000"
+
+#. module: custom_sale_panels_multiplier
+#. odoo-python
+#: code:addons/custom_sale_panels_multiplier/models/stock_lot.py:0
+msgid "Old Stock"
+msgstr "رصيد قديم"
 
 #. module: custom_sale_panels_multiplier
 #: model:ir.model.fields,field_description:custom_sale_panels_multiplier.field_account_statement_wizard__opening_balance
@@ -890,6 +927,11 @@ msgstr "الإجمالي"
 #: model_terms:ir.ui.view,arch_db:custom_sale_panels_multiplier.view_purchase_order_form_inherit_panels
 msgid "Total Quantity m³"
 msgstr "إجمالي الكمية m³"
+
+#. module: custom_sale_panels_multiplier
+#: model:ir.actions.server,name:custom_sale_panels_multiplier.action_panels_track_by_package
+msgid "Track by Package"
+msgstr "تتبع بالطرود"
 
 #. module: custom_sale_panels_multiplier
 #: model:ir.model,name:custom_sale_panels_multiplier.model_stock_picking

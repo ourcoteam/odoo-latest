@@ -23,7 +23,8 @@ class SaleOrderLine(models.Model):
     panels_lot_id = fields.Many2one(
         'stock.lot',
         string="Package No.",
-        domain="[('product_id', '=?', product_id), ('product_id.tracking', '=', 'lot'), ('product_qty', '>', 0)]",
+        # Packages in stock, and packages quoted before they arrive (see stock.lot).
+        domain="[('product_id', '=?', product_id), ('product_id.tracking', '=', 'lot'), ('panels_quotable', '=', True)]",
         check_company=True,
         index='btree_not_null',
         # A package is sold once: a duplicated quotation must not quote it again.
@@ -146,6 +147,12 @@ class SaleOrderLine(models.Model):
                     package_product=line.panels_lot_id.product_id.display_name,
                     product=line.product_id.display_name,
                 ))
+            if line.panels_lot_id and line.product_id.tracking != 'lot':
+                # A package typed on screen for a product not tracked by package.
+                raise ValidationError(_(
+                    "%s is not tracked by package: choose \"Track by Package\" on the product first.",
+                    line.product_id.display_name,
+                ))
 
     # ========== Create ==========
 
@@ -184,9 +191,9 @@ class SaleOrderLine(models.Model):
                 ], limit=1)
                 if same_name:
                     vals['panels_lot_id'] = same_name.id
-            # The form only offers packages in stock; the import matches any name.
+            # The form only offers packages that can be quoted; the import matches any name.
             lot = Lot.browse(vals['panels_lot_id'])
-            if self.env.context.get('import_file') and lot.product_qty <= 0:
+            if self.env.context.get('import_file') and not lot.panels_quotable:
                 raise ValidationError(_("Package %s has no stock left.", lot.name))
         product = self.env['product.product'].browse(vals.get('product_id'))
         # An empty imported cell arrives as False; an API call may leave the sizes out.

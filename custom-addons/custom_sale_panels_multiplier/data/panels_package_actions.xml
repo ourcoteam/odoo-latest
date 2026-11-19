@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Products > select > Action > Track by Package: lot tracking + the stock
+         already there becomes one "Old Stock" package per product. -->
+    <record id="action_panels_track_by_package" model="ir.actions.server">
+        <field name="name">Track by Package</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(4, ref('stock.group_stock_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_panels_track_by_package()</field>
+    </record>
+
+</odoo>

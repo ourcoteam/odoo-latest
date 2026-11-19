@@ -186,8 +186,36 @@ class TestPanelsQuotationPackages(TransactionCase):
                               [[self.customer.name, 'NO-SUCH-PKG', '420', '420']])
         self.assertFalse(result['ids'])
 
+    def _sell_out(self, lot):
+        order = self._order({'panels_lot_id': lot.id, 'product_id': lot.product_id.id,
+                             'product_uom_qty': lot.product_qty, 'width': 0, 'thickness': 0})
+        order.action_confirm()
+        order.picking_ids.button_validate()
+        self.assertEqual(order.picking_ids.state, 'done')
+        self.assertAlmostEqual(lot.product_qty, 0.0, places=2)
+
+    def _receive(self, product, packages):
+        purchase = self.env['purchase.order'].create({
+            'partner_id': self.vendor.id,
+            'order_line': [Command.create({'product_id': product.id, 'product_qty': sum(packages.values()),
+                                           'width': 0, 'thickness': 0, 'price_unit': 50})],
+        })
+        purchase.button_confirm()
+        receipt = purchase.picking_ids
+        move = receipt.move_ids
+        move.move_line_ids.unlink()
+        self.env['stock.move.line'].create([{
+            'move_id': move.id, 'picking_id': receipt.id, 'product_id': product.id,
+            'product_uom_id': move.product_uom.id, 'location_id': move.location_id.id,
+            'location_dest_id': move.location_dest_id.id, 'lot_name': name, 'quantity': qty,
+        } for name, qty in packages.items()])
+        move.picked = True
+        receipt.button_validate()
+        self.assertEqual(receipt.state, 'done')
+        return receipt
+
     def test_import_sold_out_package_is_refused(self):
-        self._lot('PKG-SOLD', self.redwood, 0)
+        self._sell_out(self._lot('PKG-SOLD', self.redwood, 4.41))
         result = self._import(['partner_id', 'order_line/panels_lot_id', 'order_line/length',
                                'order_line/number_of_panels'],
                               [[self.customer.name, 'PKG-SOLD', '420', '420']])
@@ -311,6 +339,90 @@ class TestPanelsQuotationPackages(TransactionCase):
         order = self.env['sale.order'].browse(result['ids'])
         order.action_confirm()
         self.assertEqual(order.picking_ids.move_ids.move_line_ids.lot_id, lot_2)
+
+    # ---------- packages quoted before they arrive ----------
+
+    def test_quote_package_before_it_arrives(self):
+        # Typed on screen once the product is chosen (many2one quick create with the line product).
+        lot_id, _name = self.env['stock.lot'].with_context(
+            default_product_id=self.redwood.id, default_company_id=self.company.id).name_create('FUT-1')
+        lot = self.env['stock.lot'].browse(lot_id)
+        self.assertTrue(lot.panels_quotable)
+        self.assertIn(lot, self.env['stock.lot'].search([('panels_quotable', '=', True)]))
+        order = self._order({'panels_lot_id': lot.id, 'product_id': self.redwood.id,
+                             'length': 420, 'number_of_panels': 420, 'price_unit': 100})
+        self.assertAlmostEqual(order.order_line.product_uom_qty, 4.41, places=6)
+        order.action_confirm()
+        move = order.picking_ids.move_ids
+        self.assertFalse(move.move_line_ids)
+        # The packing list brings it under the same number: same lot, and the delivery reserves it.
+        self._lot('FUT-OTHER', self.redwood, 5.0)  # another package in stock is never taken
+        self._receive(self.redwood, {'FUT-1': 4.41, 'FUT-2': 3.0})
+        self.assertEqual(self.env['stock.lot'].search_count(
+            [('name', '=', 'FUT-1'), ('product_id', '=', self.redwood.id)]), 1)
+        self.assertAlmostEqual(lot.product_qty, 4.41, places=2)
+        self.assertEqual(move.move_line_ids.lot_id, lot)
+        self.assertAlmostEqual(move.quantity, 4.41, places=2)
+        order.picking_ids.button_validate()
+        self.assertEqual(order.picking_ids.state, 'done')
+        lot.invalidate_recordset()
+        self.assertFalse(lot.panels_quotable)  # delivered: it cannot be quoted again
+
+    def test_import_package_before_it_arrives(self):
+        fields_list = ['partner_id', 'order_line/panels_lot_id', 'order_line/product_id',
+                       'order_line/length', 'order_line/number_of_panels', 'order_line/price_unit']
+        result = self._import(fields_list, [
+            [self.customer.name, 'FUT-IMP', self.redwood.display_name, '420', '420', '100'],
+            ['', 'FUT-IMP', self.redwood.display_name, '450', '10', '100'],
+        ])
+        self.assertFalse([m for m in result['messages'] if m['type'] == 'error'], result['messages'])
+        lines = self.env['sale.order'].browse(result['ids']).order_line
+        lot = self.env['stock.lot'].search([('name', '=', 'FUT-IMP')])
+        self.assertEqual(len(lot), 1)
+        self.assertEqual(lines.panels_lot_id, lot)
+        self.assertEqual(lot.product_id, self.redwood)
+        self.assertAlmostEqual(lines[0].product_uom_qty, 4.41, places=6)
+        # Without the product the new number is unknown.
+        result = self._import(['partner_id', 'order_line/panels_lot_id', 'order_line/length',
+                               'order_line/number_of_panels'],
+                              [[self.customer.name, 'FUT-NO-PRODUCT', '420', '420']])
+        self.assertFalse(result['ids'])
+        self.assertFalse(self.env['stock.lot'].search([('name', '=', 'FUT-NO-PRODUCT')]))
+
+    def test_package_on_product_not_tracked_is_refused(self):
+        lot = self.env['stock.lot'].create({'name': 'PLAIN-1', 'product_id': self.plain.id,
+                                            'company_id': self.company.id})
+        with self.assertRaises(ValidationError):
+            self._order({'panels_lot_id': lot.id, 'product_id': self.plain.id, 'length': 420,
+                         'width': 100, 'thickness': 38, 'number_of_panels': 10})
+
+    # ---------- products switched to package tracking ----------
+
+    def test_track_by_package_keeps_the_stock_deliverable(self):
+        product = self._timber(25.0, 125.0, tracking='none')
+        self.env['stock.quant']._update_available_quantity(product, self.stock, 10.0)
+        order = self._order({'product_id': product.id, 'length': 420, 'number_of_panels': 420})  # 5.5125 m3
+        order.action_confirm()
+        move = order.picking_ids.move_ids
+        self.assertAlmostEqual(move.quantity, 5.51, places=2)
+        result = product.product_tmpl_id.action_panels_track_by_package()
+        self.assertEqual(result['params']['type'], 'success')
+        self.assertEqual(product.tracking, 'lot')
+        old = self.env['stock.lot'].search([('product_id', '=', product.id)])
+        self.assertEqual(len(old), 1)
+        self.assertAlmostEqual(old.product_qty, 10.0, places=2)
+        self.assertEqual(move.move_line_ids.lot_id, old)  # the open reservation is redone on it
+        self.assertAlmostEqual(move.quantity, 5.51, places=2)
+        order.picking_ids.button_validate()  # a tracked product: Odoo needs a lot, it has one
+        self.assertEqual(order.picking_ids.state, 'done')
+        self.assertAlmostEqual(old.product_qty, 10.0 - move.quantity, places=2)
+        # New packages arrive as usual and are quoted by number.
+        self._receive(product, {'NEW-PKG': 3.0})
+        new = self.env['stock.lot'].search([('name', '=', 'NEW-PKG')])
+        self.assertAlmostEqual(new.product_qty, 3.0, places=2)
+        # Running it twice changes nothing.
+        product.product_tmpl_id.action_panels_track_by_package()
+        self.assertEqual(self.env['stock.lot'].search_count([('product_id', '=', product.id)]), 2)
 
     # ---------- documents ----------
 
