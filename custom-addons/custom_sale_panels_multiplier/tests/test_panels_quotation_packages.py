@@ -424,6 +424,31 @@ class TestPanelsQuotationPackages(TransactionCase):
         product.product_tmpl_id.action_panels_track_by_package()
         self.assertEqual(self.env['stock.lot'].search_count([('product_id', '=', product.id)]), 2)
 
+    def test_track_by_package_with_a_receipt_half_done(self):
+        # Two-step reception: the stock already in Input, waiting for the Input -> Stock step.
+        self.warehouse.reception_steps = 'two_steps'
+        product = self._timber(25.0, 150.0, tracking='none')
+        purchase = self.env['purchase.order'].create({
+            'partner_id': self.vendor.id,
+            'order_line': [Command.create({'product_id': product.id, 'product_qty': 5.0,
+                                           'width': 0, 'thickness': 0, 'price_unit': 50})],
+        })
+        purchase.button_confirm()
+        purchase.picking_ids.button_validate()
+        storage = purchase.picking_ids.move_ids.move_dest_ids
+        storage.picking_id.action_assign()
+        self.assertAlmostEqual(storage.quantity, 5.0, places=2)
+        product.product_tmpl_id.action_panels_track_by_package()
+        old = self.env['stock.lot'].search([('product_id', '=', product.id)])
+        self.assertEqual(len(old), 1)
+        self.assertEqual(storage.move_line_ids.lot_id, old)
+        self.assertAlmostEqual(storage.quantity, 5.0, places=2)
+        self.assertEqual(storage.state, 'assigned')
+        storage.picking_id.button_validate()
+        self.assertEqual(storage.state, 'done')
+        self.assertAlmostEqual(self.env['stock.quant']._get_available_quantity(
+            product, self.stock, lot_id=old, strict=True), 5.0, places=2)
+
     # ---------- documents ----------
 
     def test_package_on_quotation_and_load_sheet(self):

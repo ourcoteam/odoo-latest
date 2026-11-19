@@ -76,6 +76,23 @@ class ProductTemplate(models.Model):
             # A relabel, not a stock move: no valuation or history change.
             quant.write({'lot_id': lots[key].id})
         moves._action_assign()
+        # A second step (e.g. Input -> Stock) reserves what its first step brought, under the
+        # lot that step had (none): reserve it on the Old Stock package instead.
+        chained = self.env['stock.move'].sudo().search([
+            ('product_id', 'in', products.ids),
+            ('state', 'in', ('confirmed', 'partially_available')),
+            ('move_orig_ids', '!=', False),
+            ('location_id.usage', 'in', ('internal', 'transit')),
+        ])
+        for move in chained:
+            old = Lot.search([
+                ('name', '=', old_name), ('product_id', '=', move.product_id.id),
+                ('company_id', 'in', [move.company_id.id, False]),
+            ], limit=1)
+            missing = move.product_qty - move.product_uom._compute_quantity(move.quantity, move.product_id.uom_id)
+            if old and missing > 0:
+                move._update_reserved_quantity(missing, move.location_id, lot_id=old, strict=False)
+        chained._recompute_state()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
